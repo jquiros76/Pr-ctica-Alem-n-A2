@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Deutsch A2 · Prácticas Interactivas</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --negro:   #0A0C0F;
+  --carbon:  #12161C;
+  --panel:   #191E27;
+  --borde:   #2A3140;
+  --naranja: #EA580C;
+  --nar-lt:  #431407;
+  --nar-glow:#FB923C;
+  --ambar:   #D97706;
+  --ambar-lt:#451A03;
+  --verde:   #16A34A;
+  --verde-lt:#14532D;
+  --rojo:    #DC2626;
+  --rojo-lt: #450A0A;
+  --cyan:    #0891B2;
+  --texto:   #E2E8F0;
+  --muted:   #7C8BA1;
+  --blanco:  #F8FAFC;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--negro);color:var(--texto);min-height:100vh}
+
+/* ── LAYOUT ── */
+.layout{display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{
+width:264px;flex-shrink:0;
+background:var(–carbon);
+border-right:1px solid var(–borde);
+display:flex;flex-direction:column;
+position:fixed;top:0;left:0;
+height:100vh;overflow-y:auto;
+z-index:50;transition:transform 0.3s;
+}
+.sidebar-head{
+padding:20px 16px 14px;
+border-bottom:1px solid var(–borde);
+position:sticky;top:0;
+background:var(–carbon);z-index:2;
+}
+.sidebar-logo{
+font-size:19px;font-weight:800;color:var(–blanco);
+display:flex;align-items:center;gap:8px;margin-bottom:5px;
+}
+.sidebar-logo span{
+background:var(–naranja);color:#fff;
+font-size:11px;font-weight:700;
+padding:2px 8px;border-radius:4px;
+letter-spacing:0.06em;
+}
+.score-row{display:flex;align-items:center;gap:6px;font-size:12px;color:var(–muted)}
+.score-pill{
+background:var(–nar-lt);color:var(–nar-glow);
+font-weight:700;font-size:13px;
+padding:2px 10px;border-radius:20px;
+font-family:‘JetBrains Mono’,monospace;
+}
+.sidebar-nav{padding:8px 0 24px}
+.nav-tema{
+display:flex;align-items:center;gap:8px;
+padding:8px 14px;font-size:12.5px;font-weight:500;
+color:var(–muted);cursor:pointer;
+border-left:3px solid transparent;
+transition:all 0.15s;line-height:1.3;
+}
+.nav-tema:hover{color:var(–blanco);background:rgba(255,255,255,0.04)}
+.nav-tema.activo{color:var(–nar-glow);border-left-color:var(–nar-glow);background:rgba(234,88,12,0.1)}
+.nav-tema.done{color:var(–verde)}
+.nav-num{font-family:‘JetBrains Mono’,monospace;font-size:10px;color:var(–borde);min-width:18px;flex-shrink:0}
+.nav-check{font-size:10px;margin-left:auto;flex-shrink:0;color:var(–muted)}
+
+/* ── HAMBURGER ── */
+.hamburger{
+display:none;position:fixed;top:14px;left:14px;z-index:200;
+background:var(–naranja);border:none;border-radius:8px;
+width:38px;height:38px;cursor:pointer;
+flex-direction:column;align-items:center;justify-content:center;gap:5px;
+}
+.hamburger span{display:block;width:18px;height:2px;background:#fff;border-radius:2px}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:40}
+
+/* ── MAIN ── */
+.main{margin-left:264px;flex:1;padding:32px 24px 80px;max-width:820px}
+
+/* ── HERO INICIO ── */
+.inicio{
+display:flex;flex-direction:column;
+align-items:center;justify-content:center;
+min-height:60vh;text-align:center;padding:40px 16px;
+}
+.inicio-flag{font-size:72px;margin-bottom:18px;filter:drop-shadow(0 4px 24px rgba(234,88,12,.3))}
+.inicio h1{font-size:clamp(28px,5vw,38px);font-weight:800;color:var(–blanco);margin-bottom:10px}
+.inicio h1 em{font-style:normal;color:var(–nar-glow)}
+.inicio p{font-size:15px;color:var(–muted);max-width:420px;line-height:1.7;margin-bottom:28px}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%;max-width:360px;margin-bottom:28px}
+.stat-card{background:var(–panel);border:1px solid var(–borde);border-radius:10px;padding:14px;text-align:center}
+.stat-card .num{font-family:‘JetBrains Mono’,monospace;font-size:26px;font-weight:700;color:var(–nar-glow)}
+.stat-card .lbl{font-size:11px;color:var(–muted);margin-top:2px}
+.btn-start{
+font-family:‘Outfit’,sans-serif;font-size:16px;font-weight:700;
+padding:14px 40px;background:var(–naranja);color:#fff;
+border:none;border-radius:10px;cursor:pointer;transition:all 0.2s;
+}
+.btn-start:hover{background:var(–nar-glow);transform:translateY(-2px);box-shadow:0 8px 28px rgba(234,88,12,.35)}
+
+/* ── TEMA HEADER ── */
+.tema-header{
+display:flex;align-items:flex-start;gap:14px;
+margin-bottom:24px;padding-bottom:20px;
+border-bottom:1px solid var(–borde);
+}
+.tema-icon{
+width:48px;height:48px;border-radius:12px;
+background:linear-gradient(135deg,var(–naranja),var(–ambar));
+display:flex;align-items:center;justify-content:center;
+font-size:22px;flex-shrink:0;
+}
+.tema-title{font-size:22px;font-weight:800;color:var(–blanco);line-height:1.2}
+.tema-sub{font-size:13px;color:var(–muted);margin-top:3px}
+.tema-pts{margin-left:auto;text-align:right;flex-shrink:0}
+.tema-pts .big{font-family:‘JetBrains Mono’,monospace;font-size:24px;font-weight:700;color:var(–nar-glow)}
+.tema-pts .lbl{font-size:11px;color:var(–muted)}
+
+/* ── PROGRESS BAR ── */
+.prog-wrap{background:var(–borde);border-radius:20px;height:4px;margin-bottom:24px;overflow:hidden}
+.prog-bar{height:100%;background:linear-gradient(90deg,var(–naranja),var(–ambar));border-radius:20px;transition:width .4s ease}
+
+/* ── TIPO SECCIÓN ── */
+.tipo-sec{margin-bottom:32px}
+.tipo-label{
+display:flex;align-items:center;gap:8px;
+font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;
+color:var(–muted);margin-bottom:14px;
+}
+.tipo-label::after{content:’’;flex:1;height:1px;background:var(–borde)}
+.tbadge{padding:3px 10px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:.08em}
+.tbadge-mc  {background:#1C2A1C;color:#4ADE80}
+.tbadge-fill{background:#1C1A2A;color:#818CF8}
+.tbadge-tr  {background:#2A1C0A;color:#FCD34D}
+
+/* ── TARJETA EJERCICIO ── */
+.ejercicio{
+background:var(–panel);border:1px solid var(–borde);
+border-radius:12px;padding:18px 20px;margin-bottom:12px;
+transition:border-color .2s;
+}
+.ejercicio.correcto{border-color:var(–verde)}
+.ejercicio.incorrecto{border-color:var(–rojo)}
+.ej-num{font-family:‘JetBrains Mono’,monospace;font-size:10px;color:var(–muted);margin-bottom:8px}
+.ej-p{font-size:15px;font-weight:600;color:var(–blanco);line-height:1.5;margin-bottom:14px}
+.ej-p em{font-style:normal;color:var(–nar-glow)}
+
+/* Opciones MC */
+.opciones{display:flex;flex-direction:column;gap:7px}
+.opcion{
+display:flex;align-items:center;gap:10px;
+padding:10px 14px;border-radius:8px;
+border:1.5px solid var(–borde);background:var(–carbon);
+cursor:pointer;font-size:14px;font-weight:500;color:var(–texto);
+transition:all .15s;text-align:left;font-family:‘Outfit’,sans-serif;
+}
+.opcion:hover:not(:disabled){border-color:var(–nar-glow);color:var(–blanco);background:rgba(234,88,12,.1)}
+.opcion.ok {border-color:var(–verde)!important;background:rgba(22,163,74,.12)!important;color:#86EFAC!important}
+.opcion.err{border-color:var(–rojo)!important;background:rgba(220,38,38,.1)!important;color:#FCA5A5!important}
+.opcion.rev{border-color:var(–verde)!important;background:rgba(22,163,74,.07)!important;color:#86EFAC!important}
+.opcion:disabled{cursor:default}
+.op-letra{
+width:24px;height:24px;border-radius:6px;background:var(–borde);
+display:flex;align-items:center;justify-content:center;
+font-size:11px;font-weight:700;font-family:‘JetBrains Mono’,monospace;flex-shrink:0;
+}
+
+/* Fill */
+.fill-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.fill-inp{
+font-family:‘JetBrains Mono’,monospace;font-size:15px;font-weight:500;
+padding:9px 14px;background:var(–carbon);
+border:1.5px solid var(–borde);border-radius:8px;
+color:var(–blanco);outline:none;min-width:160px;transition:border-color .2s;
+}
+.fill-inp:focus{border-color:var(–nar-glow)}
+.fill-inp.ok {border-color:var(–verde)!important;color:#86EFAC}
+.fill-inp.err{border-color:var(–rojo)!important;color:#FCA5A5}
+.fill-inp:disabled{cursor:default}
+
+/* Traducir */
+.tr-inp{
+width:100%;font-family:‘Outfit’,sans-serif;font-size:14px;
+padding:11px 14px;background:var(–carbon);
+border:1.5px solid var(–borde);border-radius:8px;
+color:var(–blanco);outline:none;margin-bottom:10px;transition:border-color .2s;
+}
+.tr-inp:focus{border-color:var(–nar-glow)}
+.tr-inp.ok {border-color:var(–verde);color:#86EFAC}
+.tr-inp.err{border-color:var(–rojo);color:#FCA5A5}
+.tr-inp:disabled{cursor:default}
+
+/* Botón verificar */
+.btn-chk{
+font-family:‘Outfit’,sans-serif;font-size:13px;font-weight:700;
+padding:9px 18px;border-radius:8px;border:none;
+background:var(–naranja);color:#fff;cursor:pointer;transition:all .15s;white-space:nowrap;
+}
+.btn-chk:hover:not(:disabled){background:var(–nar-glow);transform:translateY(-1px)}
+.btn-chk:disabled{background:var(–borde);color:var(–muted);cursor:default;transform:none}
+
+/* Feedback */
+.feedback{display:none;margin-top:10px;padding:10px 14px;border-radius:8px;font-size:13px;line-height:1.6}
+.feedback.ok {display:block;background:rgba(22,163,74,.1);border:1px solid rgba(22,163,74,.3);color:#86EFAC}
+.feedback.err{display:block;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.25);color:#FCA5A5}
+
+/* Resumen */
+.resumen{
+background:var(–panel);border:1px solid var(–borde);
+border-radius:14px;padding:28px;text-align:center;
+margin-top:16px;display:none;
+}
+.resumen.vis{display:block}
+.resumen h3{font-size:20px;font-weight:800;color:var(–blanco);margin-bottom:6px}
+.big-score{font-family:‘JetBrains Mono’,monospace;font-size:52px;font-weight:700;color:var(–nar-glow);margin:12px 0}
+.resumen p{font-size:14px;color:var(–muted);margin-bottom:20px}
+.btn-sig{
+font-family:‘Outfit’,sans-serif;font-size:14px;font-weight:700;
+padding:12px 28px;background:var(–naranja);color:#fff;
+border:none;border-radius:8px;cursor:pointer;transition:all .2s;
+}
+.btn-sig:hover{background:var(–nar-glow);transform:translateY(-1px)}
+
+@media(max-width:768px){
+.sidebar{transform:translateX(-100%)}
+.sidebar.open{transform:translateX(0)}
+.overlay.open{display:block}
+.main{margin-left:0;padding:20px 16px 64px}
+.hamburger{display:flex}
+.main{padding-top:64px}
+}
+</style>
+
+</head>
+<body>
+
+<button class="hamburger" id="ham" onclick="toggleSidebar()">
+  <span></span><span></span><span></span>
+</button>
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="layout">
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-head">
+    <div class="sidebar-logo">🇩🇪 Deutsch <span>A2</span></div>
+    <div class="score-row">Puntuación: <span class="score-pill" id="score-total">0</span></div>
+  </div>
+  <div class="sidebar-nav" id="sidebar-nav"></div>
+</nav>
+
+<main class="main" id="main-content">
+  <div class="inicio" id="pantalla-inicio">
+    <div class="inicio-flag">🇩🇪</div>
+    <h1>Alemán <em>A2</em><br>Prácticas Interactivas</h1>
+    <p>25 temas del nivel A2 — tiempos pasados, verbos separables, Konjunktiv II, voz pasiva y mucho más.</p>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="num">25</div><div class="lbl">Temas</div></div>
+      <div class="stat-card"><div class="num">3</div><div class="lbl">Tipos</div></div>
+      <div class="stat-card"><div class="num">750</div><div class="lbl">Ejercicios</div></div>
+    </div>
+    <button class="btn-start" onclick="iniciarCurso()">Comenzar →</button>
+  </div>
+  <div id="pantalla-tema" style="display:none"></div>
+</main>
+</div>
+
+<script>
+const TEMAS = [
+/* ══ 0 ══════════════════════════════════════════ */
+{id:0,titulo:"Los Tiempos Pasados",icono:"⏳",
+mc:[
+  {p:"¿Cuál es el tiempo pasado más usado en alemán hablado?",ops:["Präteritum","Plusquamperfekt","Perfekt","Futur II"],r:2,exp:"El Perfekt es el tiempo pasado estándar en la lengua hablada."},
+  {p:"¿Cuál auxiliar usa 'kommen' en Perfekt?",ops:["haben","sein","werden","lassen"],r:1,exp:"Verbos de movimiento usan 'sein': ich bin gekommen."},
+  {p:"¿Cuál auxiliar usa 'essen' en Perfekt?",ops:["sein","werden","haben","lassen"],r:2,exp:"Verbos transitivos usan 'haben': ich habe gegessen."},
+  {p:"¿Cómo se forma el Partizip II de 'machen'?",ops:["gemacht","macht","gemachtet","machte"],r:0,exp:"Verbos regulares: ge- + raíz + -t → gemacht."},
+  {p:"¿Cómo se forma el Partizip II de 'schreiben'?",ops:["geschreibt","schrieben","geschrieben","schreibte"],r:2,exp:"schreiben es irregular: geschrieben (ge- + raíz cambiada + -en)."},
+  {p:"'Ich ___ gestern ins Kino gegangen'",ops:["habe","bin","war","hatte"],r:1,exp:"gehen = movimiento → sein: ich bin gegangen."},
+  {p:"'Sie ___ das Buch gelesen'",ops:["ist","sind","hat","haben"],r:2,exp:"lesen = transitivo → haben: sie hat gelesen."},
+  {p:"¿Cómo se forma el Partizip II de 'arbeiten'?",ops:["gearbeitet","gearbeit","gearbeitete","arbeitete"],r:0,exp:"Verbos en -ten: ge- + raíz + -et → gearbeitet."},
+  {p:"¿Cuál auxiliar usa 'bleiben' en Perfekt?",ops:["haben","werden","sein","lassen"],r:2,exp:"bleiben (quedarse) usa sein: ich bin geblieben."},
+  {p:"¿Cuál auxiliar usa 'schlafen' en Perfekt?",ops:["sein","werden","lassen","haben"],r:3,exp:"schlafen no implica movimiento ni cambio de estado → haben."},
+],
+fill:[
+  {p:"Ich ___ gestern Fußball gespielt. (jugué fútbol ayer)",ans:["habe"],exp:"spielen → haben: ich habe gespielt"},
+  {p:"Er ___ nach Berlin gefahren. (viajó a Berlín)",ans:["ist"],exp:"fahren = movimiento → sein"},
+  {p:"Wir ___ das Essen gekocht. (cocinamos la comida)",ans:["haben"],exp:"kochen → haben"},
+  {p:"Sie ___ früh aufgestanden. (se levantó temprano)",ans:["ist"],exp:"aufstehen = cambio de estado → sein"},
+  {p:"Ich ___ einen Brief geschrieben. (escribí una carta)",ans:["habe"],exp:"schreiben → haben"},
+  {p:"Du ___ lange geschlafen. (dormiste mucho)",ans:["hast"],exp:"schlafen → haben: du hast geschlafen"},
+  {p:"Er ___ ins Wasser gesprungen. (saltó al agua)",ans:["ist"],exp:"springen = movimiento → sein"},
+  {p:"Wir ___ viel gelernt. (aprendimos mucho)",ans:["haben"],exp:"lernen → haben"},
+  {p:"Sie ___ nach Hause gegangen. (fue a casa)",ans:["ist"],exp:"gehen = movimiento → sein"},
+  {p:"Ich habe das Buch ___. (leí el libro)",ans:["gelesen"],exp:"lesen → Partizip II: gelesen"},
+],
+tr:[
+  {p:"Traduce: 'Ayer fui al cine'",ans:["Ich bin gestern ins Kino gegangen"],exp:"sein + gegangen (Perfekt de gehen)"},
+  {p:"Traduce: 'Ella comió una manzana'",ans:["Sie hat einen Apfel gegessen"],exp:"haben + gegessen (Perfekt de essen)"},
+  {p:"Traduce: 'Dormimos mucho'",ans:["Wir haben viel geschlafen"],exp:"haben + geschlafen"},
+  {p:"Traduce: 'Él viajó a Berlín'",ans:["Er ist nach Berlin gefahren"],exp:"sein + gefahren (fahren = movimiento)"},
+  {p:"Traduce: 'Escribí una carta'",ans:["Ich habe einen Brief geschrieben"],exp:"haben + geschrieben"},
+  {p:"Traduce: 'Ella se levantó temprano'",ans:["Sie ist früh aufgestanden"],exp:"sein + aufgestanden"},
+  {p:"Traduce: 'Aprendimos mucho'",ans:["Wir haben viel gelernt"],exp:"haben + gelernt"},
+  {p:"Traduce: '¿Qué hiciste ayer?'",ans:["Was hast du gestern gemacht?"],exp:"haben + gemacht"},
+  {p:"Traduce: 'Él saltó al agua'",ans:["Er ist ins Wasser gesprungen"],exp:"sein + gesprungen"},
+  {p:"Traduce: 'Leí el libro'",ans:["Ich habe das Buch gelesen"],exp:"haben + gelesen"},
+]},
+
+/* ══ 1 ══════════════════════════════════════════ */
+{id:1,titulo:"Guía A2 — Estructuras Clave",icono:"📘",
+mc:[
+  {p:"¿Qué introduce la conjunción 'weil'?",ops:["una consecuencia","una condición","una causa/razón","una concesión"],r:2,exp:"'weil' = porque (causa). El verbo va al final: Ich lerne, weil es wichtig ist."},
+  {p:"¿Qué introduce 'dass'?",ops:["una causa","una oración subordinada con 'que'","una condición","una comparación"],r:1,exp:"'dass' = que. Ich denke, dass er kommt."},
+  {p:"¿Dónde va el verbo en una oración con 'weil'?",ops:["posición 1","posición 2","al final","antes del sujeto"],r:2,exp:"En subordinadas con weil/dass/wenn → verbo al final."},
+  {p:"¿Qué introduce 'wenn'?",ops:["causa","comparación","condición o cuando","oposición"],r:2,exp:"'wenn' = cuando/si (condición o situación repetida)."},
+  {p:"'Ich bleibe zu Hause, ___ es regnet'",ops:["dass","weil","aber","denn"],r:1,exp:"weil = porque. Ich bleibe zu Hause, weil es regnet."},
+  {p:"¿Qué diferencia hay entre 'weil' y 'denn'?",ops:["Son idénticos","weil = subordinada (verbo al final), denn = coordinada (verbo pos.2)","denn = subordinada","No hay diferencia práctica"],r:1,exp:"weil → verbo al final. denn → posición 2 normal."},
+  {p:"'Ich glaube, ___ er krank ist'",ops:["weil","wenn","dass","ob"],r:2,exp:"dass introduce una oración completiva: Ich glaube, dass er krank ist."},
+  {p:"¿Qué introduce 'obwohl'?",ops:["causa","condición","concesión (aunque)","comparación"],r:2,exp:"'obwohl' = aunque. Obwohl es regnet, gehe ich spazieren."},
+  {p:"'___ du Zeit hast, komm bitte' (si tienes tiempo)",ops:["Weil","Dass","Wenn","Obwohl"],r:2,exp:"'wenn' = si/cuando en condicionales."},
+  {p:"¿Cuál conjunción NO cambia el orden del verbo?",ops:["weil","dass","obwohl","denn"],r:3,exp:"'denn' es coordinante → no cambia el orden: Er kommt nicht, denn er ist krank."},
+],
+fill:[
+  {p:"Ich lerne Deutsch, ___ ich in Berlin wohne. (porque)",ans:["weil"],exp:"weil + verbo al final"},
+  {p:"Ich denke, ___ er heute kommt. (que)",ans:["dass"],exp:"dass introduce subordinada"},
+  {p:"___ es regnet, bleibe ich zu Hause. (cuando/si)",ans:["Wenn"],exp:"Wenn = cuando/si"},
+  {p:"Er ist müde, ___ er viel gearbeitet hat. (porque)",ans:["weil"],exp:"weil + Perfekt al final"},
+  {p:"Ich weiß, ___ du Recht hast. (que)",ans:["dass"],exp:"dass + verbo al final"},
+  {p:"___ es kalt ist, trage ich eine Jacke. (aunque)",ans:["Obwohl"],exp:"Obwohl = aunque"},
+  {p:"Ich kann nicht kommen, ___ ich arbeite. (porque — coordinante)",ans:["denn"],exp:"denn = posición 2 normal"},
+  {p:"Sie fragt, ___ ich morgen komme. (si/whether)",ans:["ob"],exp:"ob = si (pregunta indirecta)"},
+  {p:"___ ich Zeit habe, lese ich gern. (cuando)",ans:["Wenn"],exp:"Wenn = cuando (situación habitual)"},
+  {p:"Ich glaube nicht, ___ er kommt. (que)",ans:["dass"],exp:"dass + verbo al final"},
+],
+tr:[
+  {p:"Traduce: 'Me quedo en casa porque llueve'",ans:["Ich bleibe zu Hause, weil es regnet"],exp:"weil + verbo al final"},
+  {p:"Traduce: 'Creo que él viene hoy'",ans:["Ich glaube, dass er heute kommt"],exp:"dass + verbo al final"},
+  {p:"Traduce: 'Si tienes tiempo, ven'",ans:["Wenn du Zeit hast, komm"],exp:"wenn + verbo al final"},
+  {p:"Traduce: 'Él está cansado porque trabajó mucho'",ans:["Er ist müde, weil er viel gearbeitet hat"],exp:"weil + Perfekt"},
+  {p:"Traduce: 'Aunque llueve, salgo a caminar'",ans:["Obwohl es regnet, gehe ich spazieren"],exp:"obwohl + verbo al final"},
+  {p:"Traduce: 'No puedo venir porque trabajo'",ans:["Ich kann nicht kommen, denn ich arbeite"],exp:"denn = coordinante"},
+  {p:"Traduce: 'Ella pregunta si vengo mañana'",ans:["Sie fragt, ob ich morgen komme"],exp:"ob = si (indirecta)"},
+  {p:"Traduce: 'Sé que tienes razón'",ans:["Ich weiß, dass du Recht hast"],exp:"dass + verbo al final"},
+  {p:"Traduce: 'Cuando tengo tiempo, leo'",ans:["Wenn ich Zeit habe, lese ich"],exp:"wenn al inicio → inversión"},
+  {p:"Traduce: 'No creo que él venga'",ans:["Ich glaube nicht, dass er kommt"],exp:"dass + verbo al final"},
+]},
+
+/* ══ 2 ══════════════════════════════════════════ */
+{id:2,titulo:"Verbos Modales en Pasado",icono:"⚙️",
+mc:[
+  {p:"¿Cómo se dice 'podía / pude' (Präteritum de können)?",ops:["konnte","könnte","kann","konnten"],r:0,exp:"können → ich konnte (Präteritum, sin umlaut)."},
+  {p:"¿Cómo se dice 'tenía que' (Präteritum de müssen)?",ops:["musste","müsste","muss","müssen"],r:0,exp:"müssen → ich musste."},
+  {p:"¿Cómo se dice 'quería' (Präteritum de wollen)?",ops:["wollte","wollten","will","wolle"],r:0,exp:"wollen → ich wollte."},
+  {p:"¿Cómo se dice 'debía' (Präteritum de sollen)?",ops:["soll","sollte","solle","sollt"],r:1,exp:"sollen → ich sollte."},
+  {p:"¿Cómo se dice 'se le permitía' (Präteritum de dürfen)?",ops:["durfte","dürfte","darf","durften"],r:0,exp:"dürfen → ich durfte (sin umlaut)."},
+  {p:"'Als Kind ___ ich viel spielen' (podía jugar)",ops:["konnte","kann","könnte","kannte"],r:0,exp:"können Präteritum → konnte."},
+  {p:"'Ich ___ gestern früh aufstehen' (tenía que)",ops:["muss","musste","müsste","müssen"],r:1,exp:"müssen Präteritum → musste."},
+  {p:"Los verbos modales en Präteritum terminan en:",ops:["-te / -test / -te…","-te / -tet / -ten…","-te / -test / -ten…","-st / -t / -en"],r:2,exp:"ich musste / du musstest / er musste / wir mussten / ihr musstet / sie mussten."},
+  {p:"'Er ___ nicht kommen' (no podía venir — pasado)",ops:["kann nicht","konnte nicht","könnte nicht","darf nicht"],r:1,exp:"konnte nicht = no podía."},
+  {p:"'Ich ___ das nicht machen' (no debía hacerlo — pasado)",ops:["darf nicht","durfte nicht","sollte nicht","musste nicht"],r:1,exp:"durfte nicht = no se le permitía / no debía (prohibición pasada)."},
+],
+fill:[
+  {p:"Als Kind ___ ich gut schwimmen. (podía nadar)",ans:["konnte"],exp:"können Präteritum → konnte"},
+  {p:"Ich ___ gestern arbeiten. (tenía que trabajar)",ans:["musste"],exp:"müssen Präteritum → musste"},
+  {p:"Er ___ nicht kommen. (no podía venir)",ans:["konnte"],exp:"konnte nicht = no podía"},
+  {p:"Wir ___ früh aufstehen. (teníamos que levantarnos)",ans:["mussten"],exp:"müssen → wir mussten"},
+  {p:"Sie ___ das nicht machen. (no debía hacerlo)",ans:["durfte","sollte"],exp:"durfte nicht / sollte nicht"},
+  {p:"Du ___ gut Gitarre spielen. (podías tocar guitarra)",ans:["konntest"],exp:"können → du konntest"},
+  {p:"Ich ___ um 8 Uhr da sein. (debía estar a las 8)",ans:["sollte"],exp:"sollen Präteritum → sollte"},
+  {p:"Sie ___ nicht rauchen. (no podía fumar — prohibición)",ans:["durfte"],exp:"dürfen Präteritum → durfte"},
+  {p:"Wir ___ nach Hause gehen. (quisimos ir a casa)",ans:["wollten"],exp:"wollen → wir wollten"},
+  {p:"Er ___ das Buch kaufen. (quería comprar el libro)",ans:["wollte"],exp:"wollen Präteritum → wollte"},
+],
+tr:[
+  {p:"Traduce: 'De niño podía nadar bien'",ans:["Als Kind konnte ich gut schwimmen"],exp:"konnte = Präteritum de können"},
+  {p:"Traduce: 'Ayer tenía que trabajar'",ans:["Ich musste gestern arbeiten"],exp:"musste = Präteritum de müssen"},
+  {p:"Traduce: 'Él no podía venir'",ans:["Er konnte nicht kommen"],exp:"konnte nicht"},
+  {p:"Traduce: 'Debíamos levantarnos temprano'",ans:["Wir mussten früh aufstehen"],exp:"mussten = wir Präteritum"},
+  {p:"Traduce: 'No se le permitía fumar'",ans:["Er durfte nicht rauchen","Sie durfte nicht rauchen"],exp:"durfte nicht"},
+  {p:"Traduce: 'Quería comprar el libro'",ans:["Ich wollte das Buch kaufen"],exp:"wollte = Präteritum de wollen"},
+  {p:"Traduce: 'Debía estar a las 8'",ans:["Ich sollte um 8 Uhr da sein"],exp:"sollte = Präteritum de sollen"},
+  {p:"Traduce: '¿Podías tocar guitarra?'",ans:["Konntest du Gitarre spielen?"],exp:"konntest = du Präteritum"},
+  {p:"Traduce: 'Quisieron ir a casa'",ans:["Sie wollten nach Hause gehen"],exp:"wollten = sie Präteritum"},
+  {p:"Traduce: 'No debías hacerlo'",ans:["Du solltest das nicht machen","Du durftest das nicht machen"],exp:"solltest / durftest nicht"},
+]},
+
+/* ══ 3 ══════════════════════════════════════════ */
+{id:3,titulo:"Präteritum — El Pasado Simple",icono:"📜",
+mc:[
+  {p:"¿Para qué se usa el Präteritum principalmente?",ops:["Lengua hablada cotidiana","Escritura formal, narrativa y verbos sein/haben/modales","Solo para el futuro","Para describir estados futuros"],r:1,exp:"Präteritum = pasado escrito/narrativo y verbos sein, haben, modales."},
+  {p:"'Sein' en Präteritum (ich) es:",ops:["hatte","waren","wurde","war"],r:3,exp:"ich war = yo era/estaba (Präteritum de sein)."},
+  {p:"'Haben' en Präteritum (er) es:",ops:["hat","hatte","hätte","hatten"],r:1,exp:"er hatte = él tenía/tuvo."},
+  {p:"¿Cómo se forma el Präteritum de verbos regulares?",ops:["raíz + -te","raíz + -te + desinencia","ge- + raíz + -t","raíz + -et"],r:1,exp:"ich machte / du machtest / er machte / wir machten…"},
+  {p:"Präteritum de 'gehen' (er):",ops:["geht","gehte","ging","gegangen"],r:2,exp:"gehen es irregular: er ging (raíz completamente diferente)."},
+  {p:"Präteritum de 'kommen' (wir):",ops:["kamen","kommen","gekommt","kommten"],r:0,exp:"kommen → wir kamen."},
+  {p:"Präteritum de 'sprechen' (ich):",ops:["sprechte","sprach","gesprochen","spricht"],r:1,exp:"sprechen → ich sprach (irregular, Ablaut)."},
+  {p:"'Ich ___ gestern sehr müde' (era/estaba)",ops:["habe","hatte","war","wurde"],r:2,exp:"sein Präteritum → ich war."},
+  {p:"Präteritum de 'sehen' (sie — ella):",ops:["sah","sieht","gesehen","sahen"],r:0,exp:"sehen → sie sah."},
+  {p:"'Er ___ ein Buch' (tenía un libro — Präteritum)",ops:["hat","hatte","ist","war"],r:1,exp:"haben Präteritum → er hatte."},
+],
+fill:[
+  {p:"Ich ___ gestern müde. (estaba cansado)",ans:["war"],exp:"sein Präteritum → ich war"},
+  {p:"Sie ___ ein Buch. (tenía un libro)",ans:["hatte"],exp:"haben Präteritum → sie hatte"},
+  {p:"Er ___ nach Berlin. (fue a Berlín)",ans:["fuhr","ging"],exp:"fahren → fuhr / gehen → ging"},
+  {p:"Wir ___ viel. (hablamos mucho)",ans:["sprachen"],exp:"sprechen → wir sprachen"},
+  {p:"Ich ___ ihn gestern. (lo vi ayer)",ans:["sah"],exp:"sehen → ich sah"},
+  {p:"Es ___ sehr kalt. (hacía mucho frío)",ans:["war"],exp:"sein → es war"},
+  {p:"Du ___ recht. (tenías razón)",ans:["hattest"],exp:"haben → du hattest"},
+  {p:"Sie ___ zu spät. (llegó tarde)",ans:["kam"],exp:"kommen → sie kam"},
+  {p:"Wir ___ den Film. (vimos la película)",ans:["sahen"],exp:"sehen → wir sahen"},
+  {p:"Er ___ nichts. (no dijo nada)",ans:["sagte","sprach"],exp:"sagen → sagte / sprechen → sprach"},
+],
+tr:[
+  {p:"Traduce: 'Ayer estaba muy cansado'",ans:["Ich war gestern sehr müde"],exp:"war = Präteritum de sein"},
+  {p:"Traduce: 'Ella tenía un libro'",ans:["Sie hatte ein Buch"],exp:"hatte = Präteritum de haben"},
+  {p:"Traduce: 'Él fue a Berlín'",ans:["Er fuhr nach Berlin","Er ging nach Berlin"],exp:"fuhr (fahren) o ging (gehen)"},
+  {p:"Traduce: 'Hablamos mucho'",ans:["Wir sprachen viel"],exp:"sprachen = wir Präteritum"},
+  {p:"Traduce: 'Lo vi ayer'",ans:["Ich sah ihn gestern"],exp:"sah = Präteritum de sehen"},
+  {p:"Traduce: 'Hacía mucho frío'",ans:["Es war sehr kalt"],exp:"war = sein Präteritum"},
+  {p:"Traduce: 'Tenías razón'",ans:["Du hattest recht"],exp:"hattest = du Präteritum de haben"},
+  {p:"Traduce: 'Ella llegó tarde'",ans:["Sie kam zu spät"],exp:"kam = Präteritum de kommen"},
+  {p:"Traduce: 'Vimos la película'",ans:["Wir sahen den Film"],exp:"sahen = wir Präteritum de sehen"},
+  {p:"Traduce: 'No dijo nada'",ans:["Er sagte nichts","Er sprach nichts"],exp:"sagte / sprach + nichts"},
+]},
+
+/* ══ 4 ══════════════════════════════════════════ */
+{id:4,titulo:"Plusquamperfekt — Pasado del Pasado",icono:"⏪",
+mc:[
+  {p:"¿Para qué se usa el Plusquamperfekt?",ops:["Futuro","Presente habitual","Acción pasada anterior a otra acción pasada","Condición presente"],r:2,exp:"Plusquamperfekt = pasado del pasado. 'Antes de que X ocurriera, ya había Y'."},
+  {p:"¿Cómo se forma el Plusquamperfekt?",ops:["werden + Partizip II","Präteritum de haben/sein + Partizip II","Infinitivo + hatte","Präsens de haben + Partizip II"],r:1,exp:"hatte/war (Präteritum) + Partizip II → Plusquamperfekt."},
+  {p:"'Ich ___ das Buch schon gelesen' (ya había leído)",ops:["habe","hatte","bin","war"],r:1,exp:"hatte + gelesen = Plusquamperfekt."},
+  {p:"'Er ___ schon gegangen' (ya se había ido)",ops:["ist","war","hat","hatte"],r:1,exp:"gehen usa sein → war + gegangen."},
+  {p:"'Nachdem ich gegessen ___, ging ich schlafen'",ops:["habe","hatte","bin","war"],r:1,exp:"nachdem introduce Plusquamperfekt: nachdem ich gegessen hatte."},
+  {p:"'Wir ___ das schon gewusst' (ya lo habíamos sabido)",ops:["haben","sind","hatten","waren"],r:2,exp:"wissen → haben → hatten gewusst."},
+  {p:"'Sie ___ noch nie geflogen' (nunca había volado)",ops:["hatte","war","hat","ist"],r:1,exp:"fliegen = movimiento → sein → sie war geflogen."},
+  {p:"La conjunción típica con Plusquamperfekt es:",ops:["wenn","weil","nachdem","obwohl"],r:2,exp:"'nachdem' (después de que) introduce Plusquamperfekt + Präteritum/Perfekt."},
+  {p:"'Bevor er ankam, ___ ich schon gegessen'",ops:["habe","hatte","bin","war"],r:1,exp:"essen → haben → hatte gegessen."},
+  {p:"¿Cuál oración usa Plusquamperfekt correctamente?",ops:["Ich hatte gegessen, nachdem er ankam","Nachdem er angekommen war, aßen wir","Er hat gegessen hatte","War er gegangen sein"],r:1,exp:"Nachdem er angekommen war, aßen wir — correcto."},
+],
+fill:[
+  {p:"Ich ___ das Buch schon gelesen. (ya había leído)",ans:["hatte"],exp:"haben → hatte + Partizip II"},
+  {p:"Er ___ schon gegangen. (ya se había ido)",ans:["war"],exp:"gehen → sein → war"},
+  {p:"Wir ___ das schon gewusst. (ya lo sabíamos)",ans:["hatten"],exp:"wissen → haben → hatten"},
+  {p:"Nachdem sie gegessen ___, gingen sie ins Kino. (habían comido)",ans:["hatten"],exp:"essen → haben → hatten"},
+  {p:"Sie ___ noch nie geflogen. (nunca había volado)",ans:["war"],exp:"fliegen → sein → war"},
+  {p:"Bevor er ankam, ___ ich schon gegessen. (ya había comido)",ans:["hatte"],exp:"essen → haben → hatte"},
+  {p:"Er ___ schon eingeschlafen. (ya se había dormido)",ans:["war"],exp:"einschlafen → sein → war"},
+  {p:"Ich ___ das nie gemacht. (nunca lo había hecho)",ans:["hatte"],exp:"machen → haben → hatte"},
+  {p:"Wir ___ uns noch nie gesehen. (nunca nos habíamos visto)",ans:["hatten"],exp:"sehen → haben → hatten"},
+  {p:"Nachdem er gegangen ___, rief sie an. (se había ido)",ans:["war"],exp:"gehen → sein → war"},
+],
+tr:[
+  {p:"Traduce: 'Ya había leído el libro'",ans:["Ich hatte das Buch schon gelesen"],exp:"hatte + Partizip II"},
+  {p:"Traduce: 'Ya se había ido'",ans:["Er war schon gegangen"],exp:"war + gegangen"},
+  {p:"Traduce: 'Después de que comimos, fuimos al cine'",ans:["Nachdem wir gegessen hatten, gingen wir ins Kino"],exp:"nachdem + Plusquamperfekt"},
+  {p:"Traduce: 'Nunca había volado'",ans:["Ich war noch nie geflogen"],exp:"war + geflogen"},
+  {p:"Traduce: 'Antes de que llegara, ya había comido'",ans:["Bevor er ankam, hatte ich schon gegessen"],exp:"hatte + gegessen"},
+  {p:"Traduce: 'Ya se había dormido'",ans:["Er war schon eingeschlafen"],exp:"war + eingeschlafen"},
+  {p:"Traduce: 'Nunca lo habíamos hecho'",ans:["Wir hatten das nie gemacht"],exp:"hatten + gemacht"},
+  {p:"Traduce: 'Ya lo sabíamos'",ans:["Wir hatten das schon gewusst"],exp:"hatten + gewusst"},
+  {p:"Traduce: 'Después de que ella llamó, él se fue'",ans:["Nachdem sie angerufen hatte, ging er"],exp:"nachdem + Plusquamperfekt"},
+  {p:"Traduce: 'Nunca nos habíamos visto'",ans:["Wir hatten uns noch nie gesehen"],exp:"hatten + gesehen"},
+]},
+
+/* ══ 5 ══════════════════════════════════════════ */
+{id:5,titulo:"Entrenamiento Pasado",icono:"🏋️",
+mc:[
+  {p:"¿Cuál es el Partizip II de 'fahren'?",ops:["gefahren","fuhr","gefahrt","fährt"],r:0,exp:"fahren → gefahren (irregular)."},
+  {p:"¿Cuál es el Partizip II de 'trinken'?",ops:["getrinkt","trinkte","getrunken","trinkete"],r:2,exp:"trinken → getrunken (Ablaut: i→u)."},
+  {p:"¿Cuál es el Partizip II de 'kaufen'?",ops:["gekauft","kaufte","gekaufte","gekaufet"],r:0,exp:"kaufen regular → gekauft."},
+  {p:"¿Cuál es el Partizip II de 'nehmen'?",ops:["genommen","genehmt","nahm","nimmt"],r:0,exp:"nehmen → genommen (irregular)."},
+  {p:"¿Cuál es el Partizip II de 'sehen'?",ops:["gesieht","gesehen","sah","geseht"],r:1,exp:"sehen → gesehen."},
+  {p:"¿Cuál es el Partizip II de 'laufen'?",ops:["gelauft","lief","gelaufen","läuft"],r:2,exp:"laufen → gelaufen (usa sein)."},
+  {p:"¿Cuál es el Partizip II de 'schreiben'?",ops:["geschreibt","schrieb","geschrieben","schreibte"],r:2,exp:"schreiben → geschrieben."},
+  {p:"¿Cuál es el Partizip II de 'finden'?",ops:["gefunden","gefind","fand","findet"],r:0,exp:"finden → gefunden."},
+  {p:"¿Cuál es el Partizip II de 'geben'?",ops:["gegeben","gibt","gegabt","gab"],r:0,exp:"geben → gegeben."},
+  {p:"¿Cuál es el Partizip II de 'helfen'?",ops:["geholft","half","geholfen","hilft"],r:2,exp:"helfen → geholfen."},
+],
+fill:[
+  {p:"fahren → ich bin ___ (Perfekt)",ans:["gefahren"],exp:"fahren → gefahren (sein)"},
+  {p:"trinken → er hat ___ (Perfekt)",ans:["getrunken"],exp:"trinken → getrunken"},
+  {p:"kaufen → wir haben ___ (Perfekt)",ans:["gekauft"],exp:"kaufen → gekauft"},
+  {p:"nehmen → sie hat ___ (Perfekt)",ans:["genommen"],exp:"nehmen → genommen"},
+  {p:"laufen → ich bin ___ (Perfekt)",ans:["gelaufen"],exp:"laufen → gelaufen (sein)"},
+  {p:"schreiben → du hast ___ (Perfekt)",ans:["geschrieben"],exp:"schreiben → geschrieben"},
+  {p:"finden → er hat ___ (Perfekt)",ans:["gefunden"],exp:"finden → gefunden"},
+  {p:"geben → ich habe ___ (Perfekt)",ans:["gegeben"],exp:"geben → gegeben"},
+  {p:"helfen → sie hat ___ (Perfekt)",ans:["geholfen"],exp:"helfen → geholfen"},
+  {p:"sehen → wir haben ___ (Perfekt)",ans:["gesehen"],exp:"sehen → gesehen"},
+],
+tr:[
+  {p:"Traduce: 'Conduje a Berlín' (Perfekt)",ans:["Ich bin nach Berlin gefahren"],exp:"sein + gefahren"},
+  {p:"Traduce: 'Él bebió agua' (Perfekt)",ans:["Er hat Wasser getrunken"],exp:"haben + getrunken"},
+  {p:"Traduce: 'Compramos una casa' (Perfekt)",ans:["Wir haben ein Haus gekauft"],exp:"haben + gekauft"},
+  {p:"Traduce: 'Ella tomó el tren' (Perfekt)",ans:["Sie hat den Zug genommen"],exp:"haben + genommen"},
+  {p:"Traduce: 'Corrí mucho' (Perfekt)",ans:["Ich bin viel gelaufen"],exp:"sein + gelaufen"},
+  {p:"Traduce: 'Escribiste una carta' (Perfekt)",ans:["Du hast einen Brief geschrieben"],exp:"haben + geschrieben"},
+  {p:"Traduce: 'Él encontró las llaves' (Perfekt)",ans:["Er hat die Schlüssel gefunden"],exp:"haben + gefunden"},
+  {p:"Traduce: 'Di el libro' (Perfekt)",ans:["Ich habe das Buch gegeben"],exp:"haben + gegeben"},
+  {p:"Traduce: 'Ella me ayudó' (Perfekt)",ans:["Sie hat mir geholfen"],exp:"haben + geholfen"},
+  {p:"Traduce: 'Vimos la película' (Perfekt)",ans:["Wir haben den Film gesehen"],exp:"haben + gesehen"},
+]},
+
+/* ══ 6 ══════════════════════════════════════════ */
+{id:6,titulo:"Futuro — Futur I",icono:"🔮",
+mc:[
+  {p:"¿Cómo se forma el Futur I?",ops:["sein + Partizip II","werden + Partizip II","werden + Infinitiv","haben + Infinitiv"],r:2,exp:"werden (conjugado) + Infinitiv al final."},
+  {p:"Conjugación de 'werden' en primera persona:",ops:["werde","wird","werden","werdet"],r:0,exp:"ich werde."},
+  {p:"'Er ___ morgen kommen' (vendrá mañana)",ops:["wird","werde","werden","werdet"],r:0,exp:"er wird + Infinitiv al final."},
+  {p:"¿Dónde va el Infinitiv en Futur I?",ops:["al inicio","posición 2","posición 3","al final"],r:3,exp:"Infinitiv siempre al final: Ich werde kommen."},
+  {p:"'Wir ___ das Haus kaufen' (compraremos la casa)",ops:["wird","werde","werden","werdet"],r:2,exp:"wir werden."},
+  {p:"'Du ___ bald besser sprechen' (hablarás mejor pronto)",ops:["werde","wird","wirst","werden"],r:2,exp:"du wirst."},
+  {p:"¿Cuál oración es Futur I correcta?",ops:["Ich komme werden morgen","Ich werde morgen kommen","Werde ich morgen kommen","Ich kommen werde morgen"],r:1,exp:"Ich werde morgen kommen — verbo conjugado pos.2, Infinitiv al final."},
+  {p:"En alemán, el presente también puede expresar futuro si hay:",ops:["un adverbio de pasado","un adverbio de tiempo futuro","un modal","un Partizip II"],r:1,exp:"'Morgen gehe ich ins Kino' — presente + adverbio futuro = futuro."},
+  {p:"'Sie ___ Ärztin werden' (ella se convertirá en médica)",ops:["werde","wirst","wird","werden"],r:2,exp:"sie wird."},
+  {p:"'Ihr ___ das schaffen!' (¡lo lograrán!)",ops:["werden","werdet","wirst","wird"],r:1,exp:"ihr werdet."},
+],
+fill:[
+  {p:"Ich ___ morgen kommen. (vendré mañana)",ans:["werde"],exp:"ich werde + Infinitiv"},
+  {p:"Er ___ das Buch kaufen. (comprará el libro)",ans:["wird"],exp:"er wird + Infinitiv"},
+  {p:"Wir ___ nach Berlin fahren. (viajaremos a Berlín)",ans:["werden"],exp:"wir werden + Infinitiv"},
+  {p:"Du ___ besser sprechen. (hablarás mejor)",ans:["wirst"],exp:"du wirst + Infinitiv"},
+  {p:"Sie ___ Ärztin werden. (ella será médica)",ans:["wird"],exp:"sie wird + Infinitiv"},
+  {p:"Ihr ___ das schaffen! (¡lo lograrán!)",ans:["werdet"],exp:"ihr werdet + Infinitiv"},
+  {p:"Ich werde das ___ machen. (lo haré mañana)",ans:["morgen"],exp:"morgen = mañana (adverbio de tiempo)"},
+  {p:"Er wird das Haus ___. (comprará la casa)",ans:["kaufen"],exp:"Infinitiv al final"},
+  {p:"Wir werden viel ___. (aprenderemos mucho)",ans:["lernen"],exp:"Infinitiv al final"},
+  {p:"Sie werden bald ___. (llegarán pronto)",ans:["ankommen"],exp:"Infinitiv al final"},
+],
+tr:[
+  {p:"Traduce: 'Vendré mañana'",ans:["Ich werde morgen kommen"],exp:"werde + Infinitiv al final"},
+  {p:"Traduce: 'Él comprará el libro'",ans:["Er wird das Buch kaufen"],exp:"wird + Infinitiv al final"},
+  {p:"Traduce: 'Viajaremos a Berlín'",ans:["Wir werden nach Berlin fahren"],exp:"werden + Infinitiv al final"},
+  {p:"Traduce: 'Hablarás mejor pronto'",ans:["Du wirst bald besser sprechen"],exp:"wirst + Infinitiv al final"},
+  {p:"Traduce: 'Ella será médica'",ans:["Sie wird Ärztin werden"],exp:"wird + Infinitiv al final"},
+  {p:"Traduce: '¡Lo lograrán!'",ans:["Ihr werdet das schaffen!"],exp:"werdet + Infinitiv"},
+  {p:"Traduce: 'Aprenderemos mucho'",ans:["Wir werden viel lernen"],exp:"werden + lernen"},
+  {p:"Traduce: '¿Vendrás mañana?'",ans:["Wirst du morgen kommen?"],exp:"Futur I en pregunta"},
+  {p:"Traduce: 'Llegarán pronto'",ans:["Sie werden bald ankommen"],exp:"werden + ankommen"},
+  {p:"Traduce: 'Lo haré mañana'",ans:["Ich werde das morgen machen"],exp:"werde + machen al final"},
+]},
+
+/* ══ 7 ══════════════════════════════════════════ */
+{id:7,titulo:"Estilo Indirecto",icono:"💬",
+mc:[
+  {p:"¿Qué conjunción introduce estilo indirecto en alemán?",ops:["weil","wenn","dass","obwohl"],r:2,exp:"'dass' introduce citas indirectas: Er sagt, dass er krank ist."},
+  {p:"'Er sagt, ___ er krank ist'",ops:["ob","weil","dass","wenn"],r:2,exp:"dass + verbo al final."},
+  {p:"En estilo indirecto, el verbo va:",ops:["posición 1","posición 2","al final","antes de dass"],r:2,exp:"En subordinada con dass → verbo al final."},
+  {p:"¿Qué modo verbal se usa formalmente en estilo indirecto?",ops:["Konjunktiv I","Konjunktiv II","Imperativo","Futur II"],r:0,exp:"Konjunktiv I es el modo formal del estilo indirecto."},
+  {p:"'Sie fragt, ___ er kommt' (si viene)",ops:["dass","weil","ob","wenn"],r:2,exp:"'ob' introduce preguntas indirectas (si/whether)."},
+  {p:"'Er behauptet, ___ er das nicht getan hat'",ops:["ob","weil","wenn","dass"],r:3,exp:"dass + verbo al final (hat → al final)."},
+  {p:"Konjunktiv I de 'sein' (er) es:",ops:["ist","wäre","sei","war"],r:2,exp:"Er sei krank = (dice que) él está enfermo."},
+  {p:"'Sie sagt, er ___ krank' (Konjunktiv I de sein)",ops:["ist","war","sei","wäre"],r:2,exp:"sei = Konjunktiv I de sein."},
+  {p:"¿Cuál es la diferencia entre 'dass er kommt' y 'ob er kommt'?",ops:["Son iguales","dass = afirmación/que, ob = pregunta indirecta/si","ob = causa, dass = condición","No hay diferencia"],r:1,exp:"dass → afirmación. ob → pregunta sí/no indirecta."},
+  {p:"'Er fragt, ___ du Zeit hast' (si tienes tiempo)",ops:["dass","weil","ob","wenn"],r:2,exp:"ob = si (pregunta indirecta)."},
+],
+fill:[
+  {p:"Er sagt, ___ er krank ist. (que está enfermo)",ans:["dass"],exp:"dass + verbo al final"},
+  {p:"Sie fragt, ___ er kommt. (si viene)",ans:["ob"],exp:"ob = si (pregunta indirecta)"},
+  {p:"Er behauptet, ___ er das nicht getan hat. (que no lo hizo)",ans:["dass"],exp:"dass + verbo al final"},
+  {p:"Ich höre, ___ du Geburtstag hast. (que es tu cumpleaños)",ans:["dass"],exp:"dass + verbo al final"},
+  {p:"Er fragt, ___ du Zeit hast. (si tienes tiempo)",ans:["ob"],exp:"ob = pregunta indirecta"},
+  {p:"Sie sagt, ___ sie morgen kommt. (que viene mañana)",ans:["dass"],exp:"dass + verbo al final"},
+  {p:"Er weiß nicht, ___ er das machen soll. (si debe hacerlo)",ans:["ob"],exp:"ob = pregunta indirecta"},
+  {p:"Ich glaube, ___ es stimmt. (que es correcto)",ans:["dass"],exp:"dass + verbo al final"},
+  {p:"Sie fragt, ___ wir kommen. (si venimos)",ans:["ob"],exp:"ob = pregunta sí/no"},
+  {p:"Er sagt, er ___ krank. (Konjunktiv I de sein)",ans:["sei"],exp:"sei = Konjunktiv I de sein"},
+],
+tr:[
+  {p:"Traduce: 'Él dice que está enfermo'",ans:["Er sagt, dass er krank ist"],exp:"dass + verbo al final"},
+  {p:"Traduce: 'Ella pregunta si él viene'",ans:["Sie fragt, ob er kommt"],exp:"ob = si (pregunta)"},
+  {p:"Traduce: 'Él afirma que no lo hizo'",ans:["Er behauptet, dass er das nicht getan hat"],exp:"dass + verbo al final"},
+  {p:"Traduce: 'Oigo que es tu cumpleaños'",ans:["Ich höre, dass du Geburtstag hast"],exp:"dass + verbo al final"},
+  {p:"Traduce: 'Ella pregunta si tengo tiempo'",ans:["Sie fragt, ob ich Zeit habe"],exp:"ob + verbo al final"},
+  {p:"Traduce: 'Creo que es correcto'",ans:["Ich glaube, dass es stimmt"],exp:"dass + verbo al final"},
+  {p:"Traduce: 'No sé si debo hacerlo'",ans:["Ich weiß nicht, ob ich das machen soll"],exp:"ob + modal al final"},
+  {p:"Traduce: 'Ella dice que viene mañana'",ans:["Sie sagt, dass sie morgen kommt"],exp:"dass + verbo al final"},
+  {p:"Traduce: 'Él pregunta si venimos'",ans:["Er fragt, ob wir kommen"],exp:"ob + verbo al final"},
+  {p:"Traduce: 'Se dice que él está enfermo' (Konjunktiv I)",ans:["Er soll krank sein","Es heißt, er sei krank"],exp:"sei = Konjunktiv I de sein"},
+]},
+
+/* ══ 8 ══════════════════════════════════════════ */
+{id:8,titulo:"La Voz Pasiva",icono:"🔄",
+mc:[
+  {p:"¿Cómo se forma el Vorgangspassiv (pasiva de proceso)?",ops:["sein + Partizip II","werden + Partizip II","haben + Partizip II","werden + Infinitiv"],r:1,exp:"werden (conjugado) + Partizip II al final."},
+  {p:"'Das Buch ___ gelesen' (el libro es leído — presente)",ops:["ist","wird","hat","war"],r:1,exp:"Presente pasiva: wird + Partizip II."},
+  {p:"¿Cómo se introduce el agente en la pasiva?",ops:["mit","für","von","bei"],r:2,exp:"'von + Dativ' indica quién realiza la acción."},
+  {p:"'Das Auto ___ von ihm repariert' (fue reparado por él — Präteritum)",ops:["wird","wurde","war","ist"],r:1,exp:"Pasiva Präteritum: wurde + Partizip II."},
+  {p:"¿Cuál es la diferencia entre Vorgangspassiv y Zustandspassiv?",ops:["No hay diferencia","werden+Partizip=proceso en curso, sein+Partizip=estado resultante","sein=proceso, werden=estado","Solo la forma es diferente"],r:1,exp:"werden+Partizip = acción. sein+Partizip = estado resultado."},
+  {p:"'Die Tür ___ geöffnet' (la puerta está abierta — estado)",ops:["wird","wurde","ist","war"],r:2,exp:"Zustandspassiv (estado): ist + Partizip II."},
+  {p:"'Das Essen ___ gekocht' (la comida fue cocinada — Perfekt pasiva)",ops:["wurde","wurde...geworden","ist...worden","hat...gekocht"],r:2,exp:"Pasiva Perfekt: ist + Partizip II + worden."},
+  {p:"'Hier ___ Deutsch gesprochen' (se habla alemán aquí)",ops:["ist","hat","wird","war"],r:2,exp:"Pasiva presente impersonal: wird + Partizip II."},
+  {p:"¿Cuál pasiva es correcta?",ops:["Das Buch liest worden","Das Buch wird gelesen","Das Buch gelesen wird","Das Buch lesen wird"],r:1,exp:"Das Buch wird gelesen = el libro es leído."},
+  {p:"'Der Brief ___ von Maria geschrieben' (fue escrito por María)",ops:["ist","wird","wurde","hat"],r:2,exp:"Pasiva Präteritum: wurde + Partizip II."},
+],
+fill:[
+  {p:"Das Buch ___ gelesen. (el libro es leído — presente)",ans:["wird"],exp:"Vorgangspassiv presente: wird"},
+  {p:"Das Auto ___ repariert. (el carro fue reparado — Präteritum)",ans:["wurde"],exp:"Pasiva Präteritum: wurde"},
+  {p:"Die Tür ___ geöffnet. (la puerta está abierta — estado)",ans:["ist"],exp:"Zustandspassiv: ist"},
+  {p:"Das Essen ___ von ihr gekocht. (fue cocinado por ella)",ans:["wurde"],exp:"wurde + von + Dativ"},
+  {p:"Hier ___ Deutsch gesprochen. (se habla alemán aquí)",ans:["wird"],exp:"Pasiva presente impersonal"},
+  {p:"Der Brief ___ von Maria geschrieben. (fue escrito por María)",ans:["wurde"],exp:"Pasiva Präteritum"},
+  {p:"Das Fenster ___ geöffnet. (la ventana está abierta)",ans:["ist"],exp:"Zustandspassiv: ist"},
+  {p:"Das Haus ___ gebaut worden. (la casa ha sido construida — Perfekt)",ans:["ist"],exp:"Pasiva Perfekt: ist + Partizip II + worden"},
+  {p:"Die Aufgabe ___ von den Schülern gemacht. (fue hecha por los alumnos)",ans:["wurde"],exp:"wurde + von + Dativ"},
+  {p:"Das Problem ___ gelöst. (el problema está resuelto — estado)",ans:["ist"],exp:"Zustandspassiv: ist + Partizip II"},
+],
+tr:[
+  {p:"Traduce: 'El libro es leído' (presente pasiva)",ans:["Das Buch wird gelesen"],exp:"wird + Partizip II"},
+  {p:"Traduce: 'El carro fue reparado' (Präteritum pasiva)",ans:["Das Auto wurde repariert"],exp:"wurde + Partizip II"},
+  {p:"Traduce: 'La puerta está abierta' (estado)",ans:["Die Tür ist geöffnet"],exp:"Zustandspassiv: ist + Partizip II"},
+  {p:"Traduce: 'Aquí se habla alemán'",ans:["Hier wird Deutsch gesprochen"],exp:"wird + Partizip II"},
+  {p:"Traduce: 'La carta fue escrita por María'",ans:["Der Brief wurde von Maria geschrieben"],exp:"wurde + von + Dativ"},
+  {p:"Traduce: 'La comida fue cocinada por ella'",ans:["Das Essen wurde von ihr gekocht"],exp:"wurde + von ihr"},
+  {p:"Traduce: 'La casa ha sido construida' (Perfekt pasiva)",ans:["Das Haus ist gebaut worden"],exp:"ist + Partizip II + worden"},
+  {p:"Traduce: 'El problema está resuelto'",ans:["Das Problem ist gelöst"],exp:"ist + Partizip II (estado)"},
+  {p:"Traduce: 'La tarea fue hecha por los alumnos'",ans:["Die Aufgabe wurde von den Schülern gemacht"],exp:"wurde + von + Dativ plural"},
+  {p:"Traduce: 'La tienda está cerrada' (estado)",ans:["Das Geschäft ist geschlossen"],exp:"ist + geschlossen (Zustandspassiv)"},
+]},
+
+/* ══ 9 ══════════════════════════════════════════ */
+{id:9,titulo:"Pasiva en Tiempos Compuestos",icono:"🔃",
+mc:[
+  {p:"¿Cómo se forma la pasiva en Perfekt?",ops:["wurde + Partizip II","ist + Partizip II + worden","hat + Partizip II","sein + worden"],r:1,exp:"Pasiva Perfekt: ist/sind + Partizip II + worden (NO geworden)."},
+  {p:"'Das Buch ist gelesen ___' (Perfekt pasiva)",ops:["geworden","worden","wurde","wird"],r:1,exp:"'worden' (sin ge-) es el Partizip II de 'werden' en pasiva Perfekt."},
+  {p:"'Das Auto ist repariert worden' = ",ops:["El carro está siendo reparado","El carro fue reparado (Perfekt)","El carro será reparado","El carro estaba reparado"],r:1,exp:"ist...worden = Perfekt de la pasiva = 'ha sido / fue reparado'."},
+  {p:"¿Cuál pasiva Perfekt es correcta?",ops:["Das Buch hat gelesen worden","Das Buch ist gelesen worden","Das Buch wird gelesen worden","Das Buch wurde gelesen"],r:1,exp:"ist + Partizip II + worden."},
+  {p:"Pasiva Plusquamperfekt usa:",ops:["war + Partizip II + worden","ist + Partizip II + worden","wurde + Partizip II","werden + Partizip II"],r:0,exp:"Pasiva Plusquamperfekt: war/waren + Partizip II + worden."},
+  {p:"'Das Haus ___ gebaut worden' (Plusquamperfekt pasiva)",ops:["ist","hat","war","wurde"],r:2,exp:"Plusquamperfekt pasiva: war + Partizip II + worden."},
+  {p:"'Er sagte, das Auto ___ schon repariert worden' (Plqpf pasiva)",ops:["ist","sei","war","wäre"],r:2,exp:"Plusquamperfekt pasiva: war + worden."},
+  {p:"¿Qué forma usa 'werden' en pasiva Perfekt?",ops:["geworden","werden","worden","wurde"],r:2,exp:"En pasiva Perfekt, worden (sin ge-) para diferenciarlo del Perfekt activo."},
+  {p:"'Die Kinder ___ versorgt worden' (han sido atendidos — Perfekt)",ops:["haben","wurden","sind","waren"],r:2,exp:"sind + Partizip II + worden."},
+  {p:"Pasiva Futur I:",ops:["wird + Partizip II + werden","wurde + Partizip II","wird + Partizip II + worden","werden + Partizip II"],r:0,exp:"Pasiva Futur I: wird + Partizip II + werden."},
+],
+fill:[
+  {p:"Das Buch ist gelesen ___. (Perfekt pasiva)",ans:["worden"],exp:"Perfekt pasiva: ist + Partizip II + worden"},
+  {p:"Das Auto ___ repariert worden. (Perfekt pasiva — ha sido)",ans:["ist"],exp:"ist + Partizip II + worden"},
+  {p:"Das Haus ___ gebaut worden. (Plusquamperfekt pasiva)",ans:["war"],exp:"Plusquamperfekt pasiva: war + worden"},
+  {p:"Die Kinder ___ versorgt worden. (Perfekt pasiva — han sido)",ans:["sind"],exp:"sind + worden (plural)"},
+  {p:"Das Essen ist ___ worden. (ha sido cocinado)",ans:["gekocht"],exp:"Partizip II en el medio"},
+  {p:"Das Problem ___ gelöst worden. (había sido resuelto — Plqpf)",ans:["war"],exp:"Plusquamperfekt pasiva: war"},
+  {p:"Das Fenster ist ___ worden. (ha sido abierto)",ans:["geöffnet"],exp:"ist + Partizip II + worden"},
+  {p:"Die Tür ___ geschlossen worden. (había sido cerrada — Plqpf)",ans:["war"],exp:"war + worden"},
+  {p:"Das Buch wird ___ werden. (será leído — Futur pasiva)",ans:["gelesen"],exp:"wird + Partizip II + werden"},
+  {p:"Die Aufgabe ___ gemacht worden. (ha sido hecha — Perfekt)",ans:["ist"],exp:"ist + worden"},
+],
+tr:[
+  {p:"Traduce: 'El libro ha sido leído' (Perfekt pasiva)",ans:["Das Buch ist gelesen worden"],exp:"ist + Partizip II + worden"},
+  {p:"Traduce: 'El carro ha sido reparado'",ans:["Das Auto ist repariert worden"],exp:"ist + worden"},
+  {p:"Traduce: 'La casa había sido construida' (Plqpf pasiva)",ans:["Das Haus war gebaut worden"],exp:"war + worden"},
+  {p:"Traduce: 'Los niños han sido atendidos'",ans:["Die Kinder sind versorgt worden"],exp:"sind + worden"},
+  {p:"Traduce: 'La comida ha sido cocinada'",ans:["Das Essen ist gekocht worden"],exp:"ist + worden"},
+  {p:"Traduce: 'El problema había sido resuelto'",ans:["Das Problem war gelöst worden"],exp:"war + worden"},
+  {p:"Traduce: 'La ventana ha sido abierta'",ans:["Das Fenster ist geöffnet worden"],exp:"ist + worden"},
+  {p:"Traduce: 'La puerta había sido cerrada'",ans:["Die Tür war geschlossen worden"],exp:"war + worden"},
+  {p:"Traduce: 'El libro será leído' (Futur pasiva)",ans:["Das Buch wird gelesen werden"],exp:"wird + Partizip II + werden"},
+  {p:"Traduce: 'La tarea ha sido hecha'",ans:["Die Aufgabe ist gemacht worden"],exp:"ist + worden"},
+]},
+
+/* ══ 10 ══════════════════════════════════════════ */
+{id:10,titulo:"Verbos Modales en Voz Pasiva",icono:"🔧",
+mc:[
+  {p:"¿Cómo se forma la pasiva con modal?",ops:["modal + Partizip II + werden","modal + werden + Partizip II","modal + Partizip II","modal conjugado + Partizip II + werden"],r:0,exp:"Modal (pos.2) + Partizip II + werden (al final)."},
+  {p:"'Das muss gemacht ___' (debe ser hecho)",ops:["werden","worden","wurde","wird"],r:0,exp:"Infinitivo de werden al final: muss gemacht werden."},
+  {p:"'Das ___ repariert werden' (debe ser reparado)",ops:["muss","wird","ist","war"],r:0,exp:"muss + Partizip II + werden."},
+  {p:"'Das Buch kann ___ werden' (puede ser leído)",ops:["lesen","gelesen","las","liest"],r:1,exp:"gelesen = Partizip II de lesen."},
+  {p:"'Das Fenster ___ geöffnet werden' (debe ser abierto — soll)",ops:["muss","soll","kann","wird"],r:1,exp:"soll + Partizip II + werden."},
+  {p:"¿Cuál pasiva con modal es correcta?",ops:["Das muss werden gemacht","Das muss gemacht werden","Das werden gemacht muss","Gemacht werden muss das"],r:1,exp:"Das muss gemacht werden — orden correcto."},
+  {p:"'Hier darf nicht ___ werden' (no se puede fumar aquí)",ops:["rauchen","geraucht","raucht","rauchte"],r:1,exp:"darf nicht geraucht werden — Partizip II."},
+  {p:"'Das Problem ___ gelöst werden' (puede ser resuelto)",ops:["soll","muss","kann","darf"],r:2,exp:"kann + Partizip II + werden."},
+  {p:"'Er will ___ werden' (quiere ser elegido)",ops:["wählen","gewählt","wählte","wählt"],r:1,exp:"gewählt = Partizip II. Er will gewählt werden."},
+  {p:"Pasiva modal en Präteritum de müssen:",ops:["musste gemacht werden","musste gemacht worden","wurde gemacht müssen","muss gemacht worden sein"],r:0,exp:"Präteritum: musste + Partizip II + werden."},
+],
+fill:[
+  {p:"Das muss gemacht ___. (debe ser hecho)",ans:["werden"],exp:"Infinitiv werden al final"},
+  {p:"Das Auto muss ___ werden. (debe ser reparado)",ans:["repariert"],exp:"Partizip II en el medio"},
+  {p:"Das Buch kann ___ werden. (puede ser leído)",ans:["gelesen"],exp:"Partizip II de lesen"},
+  {p:"Hier darf nicht ___ werden. (no se puede fumar)",ans:["geraucht"],exp:"Partizip II de rauchen"},
+  {p:"Das Fenster soll ___ werden. (debe ser abierto)",ans:["geöffnet"],exp:"Partizip II de öffnen"},
+  {p:"Das Problem kann ___ werden. (puede ser resuelto)",ans:["gelöst"],exp:"Partizip II de lösen"},
+  {p:"Er will ___ werden. (quiere ser elegido)",ans:["gewählt"],exp:"Partizip II de wählen"},
+  {p:"Das ___ gemacht werden. (debe ser hecho — musste)",ans:["musste"],exp:"Präteritum de müssen"},
+  {p:"Die Tür muss ___ werden. (debe ser cerrada)",ans:["geschlossen"],exp:"Partizip II de schließen"},
+  {p:"Das Essen muss ___ werden. (debe ser cocinado)",ans:["gekocht"],exp:"Partizip II de kochen"},
+],
+tr:[
+  {p:"Traduce: 'Eso debe ser hecho'",ans:["Das muss gemacht werden"],exp:"muss + Partizip II + werden"},
+  {p:"Traduce: 'El carro debe ser reparado'",ans:["Das Auto muss repariert werden"],exp:"muss + repariert + werden"},
+  {p:"Traduce: 'El libro puede ser leído'",ans:["Das Buch kann gelesen werden"],exp:"kann + gelesen + werden"},
+  {p:"Traduce: 'Aquí no se puede fumar'",ans:["Hier darf nicht geraucht werden"],exp:"darf nicht + geraucht + werden"},
+  {p:"Traduce: 'La ventana debe ser abierta'",ans:["Das Fenster soll geöffnet werden"],exp:"soll + geöffnet + werden"},
+  {p:"Traduce: 'El problema puede ser resuelto'",ans:["Das Problem kann gelöst werden"],exp:"kann + gelöst + werden"},
+  {p:"Traduce: 'Quiere ser elegido'",ans:["Er will gewählt werden"],exp:"will + gewählt + werden"},
+  {p:"Traduce: 'Eso debía ser hecho' (Präteritum)",ans:["Das musste gemacht werden"],exp:"musste + gemacht + werden"},
+  {p:"Traduce: 'La puerta debe ser cerrada'",ans:["Die Tür muss geschlossen werden"],exp:"muss + geschlossen + werden"},
+  {p:"Traduce: 'La comida debe ser cocinada'",ans:["Das Essen muss gekocht werden"],exp:"muss + gekocht + werden"},
+]},
+
+/* ══ 11 ══════════════════════════════════════════ */
+{id:11,titulo:"El Verbo lassen",icono:"🤝",
+mc:[
+  {p:"¿Qué significa 'lassen' en su uso causativo?",ops:["dejar caer","hacer que alguien haga algo / mandar hacer","olvidar algo","dejar ir"],r:1,exp:"lassen causativo = hacer que / mandar hacer. Ich lasse das Haus bauen."},
+  {p:"¿Qué significa 'lassen' en su uso permisivo?",ops:["prohibir","mandar","dejar / permitir","olvidar"],r:2,exp:"lassen permisivo = dejar/permitir. Er lässt mich spielen."},
+  {p:"'Ich lasse das Auto ___' (mando reparar el carro)",ops:["reparieren","repariert","repariert werden","repariern"],r:0,exp:"lassen + Infinitiv: lasse...reparieren."},
+  {p:"'Er ___ sich die Haare schneiden' (se corta el cabello — hace que se lo corten)",ops:["lässt","lässt","lässt","lässt"],r:0,exp:"Er lässt sich die Haare schneiden."},
+  {p:"¿Cómo se dice 'me corté el cabello' (Perfekt de lassen)?",ops:["Ich habe mich die Haare schneiden gelassen","Ich habe mir die Haare schneiden lassen","Ich bin mir die Haare schneiden lassen","Ich ließ mir die Haare schneiden"],r:1,exp:"haben + Infinitiv + lassen (doble Infinitiv en Perfekt)."},
+  {p:"'Sie ___ die Kinder spielen' (deja jugar a los niños)",ops:["lässt","lässt","lässt","lässt"],r:0,exp:"sie lässt = ella deja/permite."},
+  {p:"¿Qué significa 'Lass das!'?",ops:["¡Hazlo!","¡Déjalo! / ¡Para!","¡Mándalo!","¡Tómalo!"],r:1,exp:"'Lass das!' = ¡Para eso! / ¡Déjalo!"},
+  {p:"'Ich lasse mich nicht ___' (no me dejo engañar)",ops:["täuschen","täuschend","getäuscht","täuscht"],r:0,exp:"lassen + Infinitiv: täuschen."},
+  {p:"Perfekt de lassen usa:",ops:["ist + lassen","hat + gelassen (simple) o hat + Infinitiv + lassen (causativo)","ist + gelassen","wird + lassen"],r:1,exp:"hat + gelassen (dejar algo) o hat + Infinitiv + lassen (causativo)."},
+  {p:"'Das lässt sich machen' significa:",ops:["Eso no se puede hacer","Eso se puede hacer / es factible","Eso debe hacerse","Eso está hecho"],r:1,exp:"'Das lässt sich machen' = eso es posible / se puede hacer."},
+],
+fill:[
+  {p:"Ich lasse das Auto ___. (mando reparar — Infinitiv)",ans:["reparieren"],exp:"lassen + Infinitiv"},
+  {p:"Er ___ sich die Haare schneiden. (se corta el cabello)",ans:["lässt"],exp:"lassen → er lässt"},
+  {p:"Sie ___ die Kinder spielen. (deja jugar a los niños)",ans:["lässt"],exp:"lassen → sie lässt"},
+  {p:"Ich ___ das nicht machen. (no dejo hacer eso)",ans:["lasse"],exp:"lassen → ich lasse"},
+  {p:"Ich habe mir die Haare schneiden ___. (Perfekt causativo)",ans:["lassen"],exp:"Doble Infinitiv en Perfekt: lassen al final"},
+  {p:"Das ___ sich machen. (eso se puede hacer)",ans:["lässt"],exp:"Das lässt sich machen"},
+  {p:"Er hat das Auto reparieren ___. (mandó reparar — Perfekt)",ans:["lassen"],exp:"Perfekt causativo: hat + Infinitiv + lassen"},
+  {p:"___ das! (¡Para! / ¡Déjalo!)",ans:["Lass"],exp:"Imperativo de lassen → Lass!"},
+  {p:"Ich lasse mich nicht ___. (no me dejo engañar)",ans:["täuschen"],exp:"lassen + Infinitiv"},
+  {p:"Sie lässt ihn ___. (lo deja salir)",ans:["rausgehen","ausgehen"],exp:"lassen + Infinitiv"},
+],
+tr:[
+  {p:"Traduce: 'Mando reparar el carro'",ans:["Ich lasse das Auto reparieren"],exp:"lasse + Infinitiv al final"},
+  {p:"Traduce: 'Él se corta el cabello'",ans:["Er lässt sich die Haare schneiden"],exp:"lässt sich + Infinitiv"},
+  {p:"Traduce: 'Ella deja jugar a los niños'",ans:["Sie lässt die Kinder spielen"],exp:"lässt + Infinitiv"},
+  {p:"Traduce: 'Eso se puede hacer'",ans:["Das lässt sich machen"],exp:"Das lässt sich machen"},
+  {p:"Traduce: '¡Para eso!'",ans:["Lass das!"],exp:"Imperativo de lassen"},
+  {p:"Traduce: 'No me dejo engañar'",ans:["Ich lasse mich nicht täuschen"],exp:"lasse + mich + nicht + Infinitiv"},
+  {p:"Traduce: 'Mandé reparar el carro' (Perfekt)",ans:["Ich habe das Auto reparieren lassen"],exp:"habe + Infinitiv + lassen"},
+  {p:"Traduce: 'Me corté el cabello' (Perfekt)",ans:["Ich habe mir die Haare schneiden lassen"],exp:"habe + mir + Infinitiv + lassen"},
+  {p:"Traduce: 'Él la deja salir'",ans:["Er lässt sie rausgehen","Er lässt sie ausgehen"],exp:"lässt + Infinitiv"},
+  {p:"Traduce: 'No lo dejo hacer eso'",ans:["Ich lasse ihn das nicht machen"],exp:"lasse + ihn + nicht + Infinitiv"},
+]},
+
+/* ══ 12 ══════════════════════════════════════════ */
+{id:12,titulo:"Extra A2.1 — Preposiciones Dativo",icono:"🗺️",
+mc:[
+  {p:"¿Cuál preposición siempre rige dativo?",ops:["durch","für","gegen","mit"],r:3,exp:"'mit' siempre rige dativo. Ej: mit dem Auto."},
+  {p:"Preposiciones que siempre rigen dativo:",ops:["an, auf, in, über","mit, nach, seit, von, zu, bei, aus, gegenüber","für, ohne, durch, gegen","an, bei, in, über"],r:1,exp:"mit, nach, seit, von, zu, bei, aus, gegenüber → siempre dativo."},
+  {p:"'Ich fahre ___ dem Bus' (voy en autobús)",ops:["für","mit","durch","gegen"],r:1,exp:"'mit dem Bus' = en autobús (mit + dativo)."},
+  {p:"'Ich komme ___ Spanien' (vengo de España)",ops:["nach","bei","aus","seit"],r:2,exp:"'aus' + país = de (origen). Ich komme aus Spanien."},
+  {p:"'___ dem Essen gehe ich spazieren' (después de comer)",ops:["Vor","Mit","Nach","Bei"],r:2,exp:"'nach' + dativo = después de."},
+  {p:"'Ich wohne ___ meinen Eltern' (vivo con mis padres)",ops:["mit","bei","nach","von"],r:1,exp:"'bei' + Dativ = en casa de / con. Ich wohne bei meinen Eltern."},
+  {p:"'___ drei Jahren lebe ich hier' (hace tres años que vivo aquí)",ops:["Nach","Vor","Seit","Bei"],r:2,exp:"'seit' + Dativ = desde hace. Seit drei Jahren."},
+  {p:"'Das Geschenk ist ___ dir' (el regalo es de ti)",ops:["mit","nach","von","bei"],r:2,exp:"'von' + Dativ = de (posesión/origen). von dir."},
+  {p:"'Ich gehe ___ Hause' (voy a casa)",ops:["nach","zu","bei","mit"],r:0,exp:"'nach Hause' = a casa (frase hecha). Zu Hause = en casa."},
+  {p:"'Ich bin ___ Hause' (estoy en casa)",ops:["nach","zu","bei","von"],r:1,exp:"'zu Hause' = en casa. nach Hause = hacia casa."},
+],
+fill:[
+  {p:"Ich fahre ___ dem Bus. (voy en autobús)",ans:["mit"],exp:"mit + dativo"},
+  {p:"Ich komme ___ Spanien. (vengo de España)",ans:["aus"],exp:"aus + país"},
+  {p:"___ dem Essen gehe ich spazieren. (después de comer)",ans:["Nach"],exp:"nach + dativo"},
+  {p:"Ich wohne ___ meinen Eltern. (vivo con mis padres)",ans:["bei"],exp:"bei + dativo"},
+  {p:"___ drei Jahren lerne ich Deutsch. (desde hace 3 años)",ans:["Seit"],exp:"seit + dativo"},
+  {p:"Das ist ein Geschenk ___ dir. (de ti)",ans:["von"],exp:"von + dativo"},
+  {p:"Ich gehe ___ Hause. (voy a casa)",ans:["nach"],exp:"nach Hause = a casa"},
+  {p:"Ich bin ___ Hause. (estoy en casa)",ans:["zu"],exp:"zu Hause = en casa"},
+  {p:"Ich wohne ___ der Schule. (vivo cerca de la escuela)",ans:["gegenüber"],exp:"gegenüber + dativo = frente a"},
+  {p:"Er kommt ___ Berlin. (viene de Berlín)",ans:["aus"],exp:"aus + ciudad"},
+],
+tr:[
+  {p:"Traduce: 'Voy en autobús'",ans:["Ich fahre mit dem Bus"],exp:"mit dem Bus"},
+  {p:"Traduce: 'Vengo de España'",ans:["Ich komme aus Spanien"],exp:"aus + país"},
+  {p:"Traduce: 'Después de comer salgo a caminar'",ans:["Nach dem Essen gehe ich spazieren"],exp:"nach dem Essen"},
+  {p:"Traduce: 'Vivo con mis padres'",ans:["Ich wohne bei meinen Eltern"],exp:"bei meinen Eltern"},
+  {p:"Traduce: 'Desde hace tres años aprendo alemán'",ans:["Seit drei Jahren lerne ich Deutsch"],exp:"Seit drei Jahren"},
+  {p:"Traduce: 'Eso es un regalo de ti'",ans:["Das ist ein Geschenk von dir"],exp:"von dir"},
+  {p:"Traduce: 'Voy a casa'",ans:["Ich gehe nach Hause"],exp:"nach Hause"},
+  {p:"Traduce: 'Estoy en casa'",ans:["Ich bin zu Hause"],exp:"zu Hause"},
+  {p:"Traduce: 'Él viene de Berlín'",ans:["Er kommt aus Berlin"],exp:"aus Berlin"},
+  {p:"Traduce: 'Vivo frente a la escuela'",ans:["Ich wohne gegenüber der Schule"],exp:"gegenüber + dativo"},
+]},
+
+/* ══ 13 ══════════════════════════════════════════ */
+{id:13,titulo:"Bienvenido — Presentaciones A2",icono:"👋",
+mc:[
+  {p:"¿Cómo se dice 'encantado de conocerte' (informal)?",ops:["Guten Tag","Schön Sie kennenzulernen","Schön dich kennenzulernen","Herzlich willkommen"],r:2,exp:"'Schön dich kennenzulernen' = encantado de conocerte (informal/du)."},
+  {p:"¿Cómo presentas a alguien ('este es mi amigo')?",ops:["Das ist mein Freund","Ich bin mein Freund","Hier kommt mein Freund","Mein Freund ist da"],r:0,exp:"'Das ist mein Freund' = este es mi amigo."},
+  {p:"'Darf ich vorstellen? Das ist...' significa:",ops:["¿Puedo preguntar? Eso es...","¿Me permites presentar? Este/a es...","¿Puedo hablar? Eso es...","¿Me conoces? Soy..."],r:1,exp:"'Darf ich vorstellen?' = ¿me permite presentar?"},
+  {p:"¿Cómo se dice '¿De dónde eres?'",ops:["Wo wohnst du?","Woher kommst du?","Wo bist du?","Wann kommst du?"],r:1,exp:"'Woher kommst du?' = ¿de dónde eres/vienes?"},
+  {p:"'Ich bin seit zwei Jahren hier' significa:",ops:["Estaré dos años más","Hace dos años que estoy aquí","Estuve aquí dos años","Vengo cada dos años"],r:1,exp:"seit + Dativ = hace... que / desde hace."},
+  {p:"¿Cómo se dice 'me alegra verte de nuevo'?",ops:["Tschüss wieder","Schön dich wieder zu sehen","Ich sehe dich wieder","Wieder sehen"],r:1,exp:"'Schön dich wieder zu sehen' = me alegra verte de nuevo."},
+  {p:"'Was machst du beruflich?' significa:",ops:["¿Qué haces de vacaciones?","¿Cuál es tu pasatiempo?","¿A qué te dedicas profesionalmente?","¿Qué estudias?"],r:2,exp:"beruflich = profesionalmente. ¿A qué te dedicas?"},
+  {p:"¿Cómo se dice 'tengo 25 años'?",ops:["Ich habe 25 Jahre","Ich bin 25 Jahre alt","Ich werde 25","Ich bin 25 Jahre"],r:1,exp:"'Ich bin X Jahre alt' = tengo X años."},
+  {p:"¿Cómo se dice 'vivo en Madrid'?",ops:["Ich komme aus Madrid","Ich fahre nach Madrid","Ich wohne in Madrid","Ich bin in Madrid"],r:2,exp:"'Ich wohne in + ciudad' = vivo en."},
+  {p:"'Ich spreche ein bisschen Deutsch' significa:",ops:["Hablo alemán perfectamente","Hablo un poco de alemán","No hablo alemán","Estudio alemán"],r:1,exp:"ein bisschen = un poco."},
+],
+fill:[
+  {p:"Schön dich ___. (encantado de conocerte — Infinitiv)",ans:["kennenzulernen"],exp:"kennenlernen → kennenzulernen (zu-Infinitiv)"},
+  {p:"___ ich vorstellen? Das ist Anna. (¿me permite presentar?)",ans:["Darf"],exp:"Darf ich vorstellen?"},
+  {p:"Woher ___ du? (¿de dónde eres?)",ans:["kommst"],exp:"kommen → du kommst"},
+  {p:"Ich ___ seit zwei Jahren hier. (hace 2 años que estoy aquí)",ans:["bin"],exp:"sein → ich bin"},
+  {p:"Ich ___ 25 Jahre alt. (tengo 25 años)",ans:["bin"],exp:"sein → ich bin X Jahre alt"},
+  {p:"Ich ___ in Madrid. (vivo en Madrid)",ans:["wohne"],exp:"wohnen → ich wohne"},
+  {p:"Ich spreche ein ___ Deutsch. (un poco de alemán)",ans:["bisschen"],exp:"ein bisschen = un poco"},
+  {p:"Was machst du ___? (¿a qué te dedicas profesionalmente?)",ans:["beruflich"],exp:"beruflich = profesionalmente"},
+  {p:"Schön dich wieder zu ___. (me alegra verte de nuevo)",ans:["sehen"],exp:"zu sehen = Infinitiv con zu"},
+  {p:"Das ist ___ Freund. (este es mi amigo — masculino)",ans:["mein"],exp:"mein = mi (masculino nominativo)"},
+],
+tr:[
+  {p:"Traduce: 'Encantado de conocerte'",ans:["Schön dich kennenzulernen"],exp:"kennenzulernen"},
+  {p:"Traduce: '¿De dónde eres?'",ans:["Woher kommst du?"],exp:"Woher kommst du?"},
+  {p:"Traduce: 'Hace dos años que estoy aquí'",ans:["Ich bin seit zwei Jahren hier"],exp:"seit zwei Jahren"},
+  {p:"Traduce: 'Tengo 25 años'",ans:["Ich bin 25 Jahre alt"],exp:"Ich bin X Jahre alt"},
+  {p:"Traduce: 'Vivo en Madrid'",ans:["Ich wohne in Madrid"],exp:"Ich wohne in + ciudad"},
+  {p:"Traduce: 'Hablo un poco de alemán'",ans:["Ich spreche ein bisschen Deutsch"],exp:"ein bisschen"},
+  {p:"Traduce: '¿A qué te dedicas?'",ans:["Was machst du beruflich?","Was bist du von Beruf?"],exp:"beruflich o von Beruf"},
+  {p:"Traduce: 'Este es mi amigo Juan'",ans:["Das ist mein Freund Juan"],exp:"Das ist mein Freund"},
+  {p:"Traduce: '¿Me permite presentar? Esta es Ana'",ans:["Darf ich vorstellen? Das ist Ana"],exp:"Darf ich vorstellen?"},
+  {p:"Traduce: 'Me alegra verte de nuevo'",ans:["Schön dich wieder zu sehen"],exp:"zu sehen"},
+]},
+
+/* ══ 14 ══════════════════════════════════════════ */
+{id:14,titulo:"Pronombres Personales — Verbos Regulares",icono:"👤",
+mc:[
+  {p:"¿Cuál es la desinencia de verbos regulares para 'ich'?",ops:["-t","-st","-e","-en"],r:2,exp:"ich mach-e, ich lern-e."},
+  {p:"¿Cuál es la desinencia para 'du'?",ops:["-e","-t","-st","-en"],r:2,exp:"du mach-st, du lern-st."},
+  {p:"¿Cuál es la desinencia para 'er/sie/es'?",ops:["-e","-st","-en","-t"],r:3,exp:"er mach-t, sie lern-t."},
+  {p:"¿Cuál es la desinencia para 'wir'?",ops:["-t","-e","-en","-st"],r:2,exp:"wir mach-en, wir lern-en."},
+  {p:"¿Cuál es la desinencia para 'ihr'?",ops:["-en","-st","-e","-t"],r:3,exp:"ihr mach-t, ihr lern-t."},
+  {p:"¿Cuál es la desinencia para 'sie/Sie'?",ops:["-t","-st","-e","-en"],r:3,exp:"sie/Sie mach-en."},
+  {p:"'arbeiten' (du) — raíz termina en -t:",ops:["du arbeitest","du arbeitest","du arbeitest","du arbeitest"],r:0,exp:"Verbos en -t/-d añaden -e- extra: du arbeit-e-st."},
+  {p:"'öffnen' (er) — raíz termina en -n:",ops:["er öffnt","er öffnet","er öffnen","er öffnest"],r:1,exp:"Raíz en consonante difícil + -n → er öffnet (-et)."},
+  {p:"Conjugación completa de 'lernen' (ihr):",ops:["ihr lernt","ihr lernst","ihr lernen","ihr lerne"],r:0,exp:"ihr lern-t."},
+  {p:"¿Cuál es el pronombre formal de cortesía?",ops:["er","ihr","sie","Sie"],r:3,exp:"'Sie' (mayúscula) = usted/ustedes (formal)."},
+],
+fill:[
+  {p:"Ich ___ Deutsch. (aprendo alemán — lernen)",ans:["lerne"],exp:"ich + -e → lerne"},
+  {p:"Du ___ viel. (trabajas mucho — arbeiten)",ans:["arbeitest"],exp:"raíz -t → du arbeitest"},
+  {p:"Er ___ gern. (le gusta jugar — spielen)",ans:["spielt"],exp:"er + -t → spielt"},
+  {p:"Wir ___ zusammen. (vivimos juntos — wohnen)",ans:["wohnen"],exp:"wir + -en → wohnen"},
+  {p:"Ihr ___ zu laut. (habláis demasiado alto — reden)",ans:["redet"],exp:"raíz -d → ihr redet"},
+  {p:"Sie ___ in Berlin. (ella vive en Berlín — wohnen)",ans:["wohnt"],exp:"sie (ella) + -t → wohnt"},
+  {p:"Sie ___ gut Deutsch. (ustedes hablan bien alemán — sprechen)",ans:["sprechen"],exp:"Sie (formal) + -en → sprechen"},
+  {p:"Ich ___ jeden Tag. (hago deporte cada día — machen)",ans:["mache"],exp:"ich mache"},
+  {p:"Er ___ die Tür. (abre la puerta — öffnen)",ans:["öffnet"],exp:"öffnen → er öffnet"},
+  {p:"Du ___ sehr schnell. (corres muy rápido — laufen)",ans:["läufst"],exp:"laufen irregular → du läufst"},
+],
+tr:[
+  {p:"Traduce: 'Aprendo alemán'",ans:["Ich lerne Deutsch"],exp:"ich lerne"},
+  {p:"Traduce: 'Tú trabajas mucho'",ans:["Du arbeitest viel"],exp:"du arbeitest"},
+  {p:"Traduce: 'A él le gusta jugar'",ans:["Er spielt gern"],exp:"er spielt gern"},
+  {p:"Traduce: 'Vivimos juntos'",ans:["Wir wohnen zusammen"],exp:"wir wohnen"},
+  {p:"Traduce: 'Vosotros habláis demasiado alto'",ans:["Ihr redet zu laut"],exp:"ihr redet"},
+  {p:"Traduce: 'Ella vive en Berlín'",ans:["Sie wohnt in Berlin"],exp:"sie wohnt"},
+  {p:"Traduce: 'Ustedes hablan bien alemán'",ans:["Sie sprechen gut Deutsch"],exp:"Sie (formal) sprechen"},
+  {p:"Traduce: 'Él abre la puerta'",ans:["Er öffnet die Tür"],exp:"er öffnet"},
+  {p:"Traduce: 'Corres muy rápido'",ans:["Du läufst sehr schnell"],exp:"du läufst"},
+  {p:"Traduce: 'Hago deporte cada día'",ans:["Ich mache jeden Tag Sport"],exp:"ich mache Sport"},
+]},
+
+/* ══ 15 ══════════════════════════════════════════ */
+{id:15,titulo:"Verbos Irregulares",icono:"⚡",
+mc:[
+  {p:"'fahren' (du) — Präsens irregular:",ops:["du fahrst","du fährst","du fahrenst","du fährt"],r:1,exp:"a→ä en du/er: du fährst."},
+  {p:"'lesen' (er) — Präsens:",ops:["er lest","er lesst","er liest","er lieset"],r:2,exp:"e→ie en du/er: er liest."},
+  {p:"'nehmen' (du) — Präsens:",ops:["du nehmst","du nimmst","du nahmst","du nehmt"],r:1,exp:"e→i en du/er: du nimmst."},
+  {p:"'sehen' (er) — Präsens:",ops:["er seht","er siehst","er sieht","er sehen"],r:2,exp:"e→ie: er sieht."},
+  {p:"'geben' (du) — Präsens:",ops:["du gebst","du gibst","du gibt","du giebst"],r:1,exp:"e→i: du gibst."},
+  {p:"'schlafen' (er) — Präsens:",ops:["er schläft","er schlaft","er schlafen","er schlafst"],r:0,exp:"a→ä: er schläft."},
+  {p:"'laufen' (du) — Präsens:",ops:["du lauft","du laufst","du läufst","du läuft"],r:2,exp:"au→äu: du läufst."},
+  {p:"'helfen' (er) — Präsens:",ops:["er hilft","er helft","er helpst","er hilfst"],r:0,exp:"e→i: er hilft."},
+  {p:"'sprechen' (du) — Präsens:",ops:["du sprechst","du spricht","du sprichst","du sprächst"],r:2,exp:"e→i: du sprichst."},
+  {p:"'tragen' (er) — Präsens:",ops:["er trägt","er tragt","er tragst","er trägst"],r:0,exp:"a→ä: er trägt."},
+],
+fill:[
+  {p:"Er ___ schnell. (conduce rápido — fahren)",ans:["fährt"],exp:"fahren a→ä: er fährt"},
+  {p:"Du ___ das Buch. (lees el libro — lesen)",ans:["liest"],exp:"lesen e→ie: du liest"},
+  {p:"Er ___ das Geld. (toma el dinero — nehmen)",ans:["nimmt"],exp:"nehmen e→i: er nimmt"},
+  {p:"Du ___ ihn. (lo ves — sehen)",ans:["siehst"],exp:"sehen e→ie: du siehst"},
+  {p:"Er ___ mir das Buch. (me da el libro — geben)",ans:["gibt"],exp:"geben e→i: er gibt"},
+  {p:"Du ___. (duermes — schlafen)",ans:["schläfst"],exp:"schlafen a→ä: du schläfst"},
+  {p:"Du ___ sehr schnell. (corres muy rápido — laufen)",ans:["läufst"],exp:"laufen au→äu: du läufst"},
+  {p:"Er ___ mir. (me ayuda — helfen)",ans:["hilft"],exp:"helfen e→i: er hilft"},
+  {p:"Du ___ zu laut. (hablas demasiado alto — sprechen)",ans:["sprichst"],exp:"sprechen e→i: du sprichst"},
+  {p:"Er ___ den Koffer. (lleva la maleta — tragen)",ans:["trägt"],exp:"tragen a→ä: er trägt"},
+],
+tr:[
+  {p:"Traduce: 'Él conduce rápido'",ans:["Er fährt schnell"],exp:"fahren → fährt"},
+  {p:"Traduce: 'Lees el libro'",ans:["Du liest das Buch"],exp:"lesen → liest"},
+  {p:"Traduce: 'Él toma el dinero'",ans:["Er nimmt das Geld"],exp:"nehmen → nimmt"},
+  {p:"Traduce: 'Lo ves'",ans:["Du siehst ihn"],exp:"sehen → siehst"},
+  {p:"Traduce: 'Él me da el libro'",ans:["Er gibt mir das Buch"],exp:"geben → gibt"},
+  {p:"Traduce: 'Duermes mucho'",ans:["Du schläfst viel"],exp:"schlafen → schläfst"},
+  {p:"Traduce: 'Corres muy rápido'",ans:["Du läufst sehr schnell"],exp:"laufen → läufst"},
+  {p:"Traduce: 'Él me ayuda'",ans:["Er hilft mir"],exp:"helfen → hilft"},
+  {p:"Traduce: 'Hablas demasiado alto'",ans:["Du sprichst zu laut"],exp:"sprechen → sprichst"},
+  {p:"Traduce: 'Él lleva la maleta'",ans:["Er trägt den Koffer"],exp:"tragen → trägt"},
+]},
+
+/* ══ 16 ══════════════════════════════════════════ */
+{id:16,titulo:"Verbos Separables",icono:"✂️",
+mc:[
+  {p:"¿Cómo funcionan los verbos separables en oración principal?",ops:["Prefijo + verbo juntos al inicio","Prefijo al final, verbo conjugado en pos.2","Verbo al final, prefijo al inicio","Todo junto en posición 2"],r:1,exp:"Verbo conjugado pos.2, prefijo separable al final: Ich stehe früh auf."},
+  {p:"'aufstehen' (ich, Präsens):",ops:["Ich aufstehe früh","Ich stehe früh auf","Ich stehe auf früh","Aufich stehe früh"],r:1,exp:"Ich stehe früh auf. (auf al final)"},
+  {p:"¿Cómo se forma el Partizip II de verbos separables?",ops:["ge- + prefijo + raíz + -t/en","prefijo + ge- + raíz + -t/en","prefijo + raíz + ge- + -t/en","solo raíz + -t/en sin ge-"],r:1,exp:"prefijo + ge + raíz + -t/en. aufstehen → aufgestanden."},
+  {p:"Partizip II de 'anrufen':",ops:["gerufenan","angerufen","angerufet","rufenan"],r:1,exp:"an + ge + rufen → angerufen."},
+  {p:"'einkaufen' (du, Präsens):",ops:["Du einkaufst","Du kaufst ein","Du kaufst einkaufen","Du ein kaufst"],r:1,exp:"du kaufst ein. (ein al final)"},
+  {p:"¿Dónde va el prefijo en oraciones con modal?",ops:["Después del modal","Junto al infinitivo, al final","Al inicio","Posición 2"],r:1,exp:"Modal pos.2 + prefijo junto al Infinitiv al final: Ich muss früh aufstehen."},
+  {p:"'fernsehen' (er, Präsens):",ops:["Er sieht fern","Er fernsieht","Er sieht fernsehen","Er fern sieht"],r:0,exp:"Er sieht fern. (fern al final)"},
+  {p:"Partizip II de 'aufmachen':",ops:["aufgemacht","gemachtauf","aufmacht","gemacht auf"],r:0,exp:"auf + ge + macht → aufgemacht."},
+  {p:"'mitnehmen' (wir, Präsens):",ops:["Wir mitnehmen","Wir nehmen mit","Wir mitnehmt","Wir nehmen mitnehmen"],r:1,exp:"Wir nehmen...mit. (mit al final)"},
+  {p:"¿Cuál es el Partizip II de 'abfahren'?",ops:["gefahrenab","abgefahren","abfährt","abfuhr"],r:1,exp:"ab + ge + fahren → abgefahren."},
+],
+fill:[
+  {p:"Ich stehe früh ___. (me levanto temprano — aufstehen)",ans:["auf"],exp:"Prefijo 'auf' al final"},
+  {p:"Du kaufst im Supermarkt ___. (haces las compras — einkaufen)",ans:["ein"],exp:"Prefijo 'ein' al final"},
+  {p:"Er sieht jeden Abend ___. (ve televisión cada noche — fernsehen)",ans:["fern"],exp:"Prefijo 'fern' al final"},
+  {p:"Wir nehmen die Kinder ___. (llevamos a los niños — mitnehmen)",ans:["mit"],exp:"Prefijo 'mit' al final"},
+  {p:"Ich rufe dich später ___. (te llamo después — anrufen)",ans:["an"],exp:"Prefijo 'an' al final"},
+  {p:"Er macht die Tür ___. (abre la puerta — aufmachen)",ans:["auf"],exp:"Prefijo 'auf' al final"},
+  {p:"Ich habe früh ___gestanden. (Perfekt de aufstehen)",ans:["auf"],exp:"auf + ge = aufge- → aufgestanden"},
+  {p:"Ich habe dich ___gerufen. (Perfekt de anrufen)",ans:["an"],exp:"an + ge = ange- → angerufen"},
+  {p:"Ich muss früh ___stehen. (modal + separable)",ans:["auf"],exp:"aufstehen: prefijo junto al Infinitiv"},
+  {p:"Er hat die Tür ___gemacht. (Perfekt de aufmachen)",ans:["auf"],exp:"auf + ge = aufge- → aufgemacht"},
+],
+tr:[
+  {p:"Traduce: 'Me levanto temprano'",ans:["Ich stehe früh auf"],exp:"auf al final"},
+  {p:"Traduce: 'Haces las compras en el supermercado'",ans:["Du kaufst im Supermarkt ein"],exp:"ein al final"},
+  {p:"Traduce: 'Él ve televisión cada noche'",ans:["Er sieht jeden Abend fern"],exp:"fern al final"},
+  {p:"Traduce: 'Llevamos a los niños'",ans:["Wir nehmen die Kinder mit"],exp:"mit al final"},
+  {p:"Traduce: 'Te llamo después'",ans:["Ich rufe dich später an"],exp:"an al final"},
+  {p:"Traduce: 'Él abre la puerta'",ans:["Er macht die Tür auf"],exp:"auf al final"},
+  {p:"Traduce: 'Me levanté temprano' (Perfekt)",ans:["Ich bin früh aufgestanden"],exp:"sein + aufgestanden"},
+  {p:"Traduce: 'Te llamé' (Perfekt)",ans:["Ich habe dich angerufen"],exp:"haben + angerufen"},
+  {p:"Traduce: 'Tengo que levantarme temprano' (modal)",ans:["Ich muss früh aufstehen"],exp:"muss + aufstehen al final"},
+  {p:"Traduce: 'Él abrió la puerta' (Perfekt)",ans:["Er hat die Tür aufgemacht"],exp:"haben + aufgemacht"},
+]},
+
+/* ══ 17 ══════════════════════════════════════════ */
+{id:17,titulo:"Konjunktiv II — Condicional",icono:"💭",
+mc:[
+  {p:"¿Para qué se usa el Konjunktiv II?",ops:["Para el pasado simple","Para deseos, hipótesis y condicionales","Para el futuro","Para el imperativo"],r:1,exp:"Konjunktiv II = deseos, hipótesis, condicionales, cortesía."},
+  {p:"¿Cuál es la forma más común del Konjunktiv II?",ops:["würde + Infinitiv","sein + Partizip II","hatte + Partizip II","werden + Infinitiv"],r:0,exp:"würde + Infinitiv es la forma estándar del Konjunktiv II."},
+  {p:"Konjunktiv II de 'sein' (ich):",ops:["würde sein","sei","wäre","war"],r:2,exp:"wäre = Konjunktiv II de sein (forma propia, no würde)."},
+  {p:"Konjunktiv II de 'haben' (er):",ops:["würde haben","hatte","hätte","hat"],r:2,exp:"hätte = Konjunktiv II de haben."},
+  {p:"'Wenn ich Zeit ___, würde ich reisen' (si tuviera tiempo)",ops:["habe","hatte","hätte","wäre"],r:2,exp:"hätte = Konjunktiv II de haben en condición."},
+  {p:"'___ du mir helfen?' (¿podrías ayudarme? — cortés)",ops:["Wirst","Würdest","Wärst","Hättest"],r:1,exp:"'Würdest du mir helfen?' = ¿podrías ayudarme?"},
+  {p:"'Wenn ich reich ___, würde ich reisen' (si fuera rico)",ops:["bin","wäre","hätte","würde"],r:1,exp:"wäre = Konjunktiv II de sein."},
+  {p:"'Ich ___ gern ins Kino gehen' (me gustaría ir al cine)",ops:["will","wäre","würde","hätte"],r:2,exp:"würde + Infinitiv = me gustaría."},
+  {p:"'___ du das machen?' (¿harías eso? — cortés)",ops:["Wirst","Wärst","Hättest","Würdest"],r:3,exp:"Würdest du das machen? = ¿lo harías?"},
+  {p:"'Ich ___ das nicht tun' (yo no haría eso)",ops:["will","würde","wäre","hätte"],r:1,exp:"würde + Infinitiv = haría."},
+],
+fill:[
+  {p:"Ich ___ gern reisen. (me gustaría viajar — würde)",ans:["würde"],exp:"würde + Infinitiv"},
+  {p:"Wenn ich Zeit hätte, ___ ich lesen. (si tuviera tiempo, leería)",ans:["würde"],exp:"würde + Infinitiv en resultado"},
+  {p:"Er ___ gern helfen. (le gustaría ayudar)",ans:["würde"],exp:"würde + Infinitiv"},
+  {p:"Wenn ich reich ___, würde ich reisen. (si fuera rico)",ans:["wäre"],exp:"wäre = Konjunktiv II de sein"},
+  {p:"Wenn ich mehr Geld ___, würde ich ein Haus kaufen. (si tuviera más dinero)",ans:["hätte"],exp:"hätte = Konjunktiv II de haben"},
+  {p:"___ du mir bitte helfen? (¿podrías ayudarme? — cortés)",ans:["Würdest"],exp:"Würdest du... = condicional cortés"},
+  {p:"Ich ___ so gern Urlaub machen! (ojalá pudiera ir de vacaciones)",ans:["würde"],exp:"würde + Infinitiv = deseo"},
+  {p:"Er ___ früher aufstehen, wenn er pünktlich sein will. (debería levantarse)",ans:["würde","sollte"],exp:"würde / sollte"},
+  {p:"Wenn das Wetter besser ___, würden wir ausgehen. (si hiciera mejor tiempo)",ans:["wäre"],exp:"wäre = Konjunktiv II de sein"},
+  {p:"Ich ___ gern mehr schlafen. (me gustaría dormir más)",ans:["würde"],exp:"würde + Infinitiv"},
+],
+tr:[
+  {p:"Traduce: 'Me gustaría viajar'",ans:["Ich würde gern reisen"],exp:"würde + Infinitiv"},
+  {p:"Traduce: 'Si tuviera tiempo, leería'",ans:["Wenn ich Zeit hätte, würde ich lesen"],exp:"hätte + würde + Infinitiv"},
+  {p:"Traduce: '¿Podrías ayudarme?'",ans:["Würdest du mir helfen?"],exp:"Würdest + Infinitiv"},
+  {p:"Traduce: 'Si fuera rico, viajaría'",ans:["Wenn ich reich wäre, würde ich reisen"],exp:"wäre + würde"},
+  {p:"Traduce: 'Me gustaría ir al cine'",ans:["Ich würde gern ins Kino gehen"],exp:"würde gern + Infinitiv"},
+  {p:"Traduce: 'Si hiciera mejor tiempo, saldríamos'",ans:["Wenn das Wetter besser wäre, würden wir ausgehen"],exp:"wäre + würden"},
+  {p:"Traduce: 'Me gustaría dormir más'",ans:["Ich würde gern mehr schlafen"],exp:"würde gern + Infinitiv"},
+  {p:"Traduce: 'Yo no haría eso'",ans:["Ich würde das nicht tun"],exp:"würde + nicht + Infinitiv"},
+  {p:"Traduce: 'Si tuviera más dinero, compraría una casa'",ans:["Wenn ich mehr Geld hätte, würde ich ein Haus kaufen"],exp:"hätte + würde"},
+  {p:"Traduce: '¿Harías eso?'",ans:["Würdest du das machen?"],exp:"Würdest du + Infinitiv?"},
+]},
+
+/* ══ 18 ══════════════════════════════════════════ */
+{id:18,titulo:"Declinación de Sustantivos",icono:"📊",
+mc:[
+  {p:"¿Cuál es el artículo dativo masculino definido?",ops:["den","der","dem","des"],r:2,exp:"Masculino dativo definido → dem."},
+  {p:"¿Cuál es el artículo dativo femenino definido?",ops:["der","die","dem","den"],r:0,exp:"Femenino dativo definido → der."},
+  {p:"¿Cuál es el artículo dativo neutro definido?",ops:["das","dem","den","der"],r:1,exp:"Neutro dativo definido → dem."},
+  {p:"¿Cuál es el artículo dativo plural definido?",ops:["die","den","dem","der"],r:1,exp:"Plural dativo definido → den (+n al sustantivo si posible)."},
+  {p:"'Ich gebe ___ Mann das Buch' (al hombre — dativo)",ops:["der","den","dem","des"],r:2,exp:"Masculino dativo definido → dem Mann."},
+  {p:"'Ich helfe ___ Frau' (a la mujer — dativo)",ops:["die","der","dem","den"],r:1,exp:"Femenino dativo definido → der Frau."},
+  {p:"'Mit ___ Kindern spielen' (con los niños — dativo plural)",ops:["die","der","dem","den"],r:3,exp:"Plural dativo → den Kindern (+n)."},
+  {p:"'Das gehört ___ Mann' (pertenece a un hombre — dativo indef.)",ops:["einem","einen","ein","eine"],r:0,exp:"Masculino dativo indefinido → einem."},
+  {p:"'Das gehört ___ Frau' (pertenece a una mujer — dativo indef.)",ops:["einem","einen","einer","eine"],r:2,exp:"Femenino dativo indefinido → einer."},
+  {p:"En dativo plural, los sustantivos añaden:",ops:["nada","-e","-n","-er"],r:2,exp:"Dativo plural: den + sustantivo + -n (si no termina ya en -n)."},
+],
+fill:[
+  {p:"Ich gebe ___ Mann das Buch. (al hombre — dativo def.)",ans:["dem"],exp:"Masculino dativo → dem"},
+  {p:"Ich helfe ___ Frau. (a la mujer — dativo def.)",ans:["der"],exp:"Femenino dativo → der"},
+  {p:"Das Kind spielt mit ___ Hund. (con el perro)",ans:["dem"],exp:"Masculino dativo → dem"},
+  {p:"Ich danke ___ Lehrerin. (a la profesora)",ans:["der"],exp:"Femenino dativo → der"},
+  {p:"Er hilft ___ Kindern. (a los niños — dativo plural)",ans:["den"],exp:"Plural dativo → den"},
+  {p:"Das gehört ___ Mann. (a un hombre — indef.)",ans:["einem"],exp:"Masculino dativo indef. → einem"},
+  {p:"Das gehört ___ Frau. (a una mujer — indef.)",ans:["einer"],exp:"Femenino dativo indef. → einer"},
+  {p:"Ich wohne bei ___ Eltern. (con mis padres — Possessivartikel)",ans:["meinen"],exp:"Plural dativo → meinen"},
+  {p:"Er gibt ___ Kind das Spielzeug. (al niño — dativo)",ans:["dem"],exp:"Neutro dativo → dem"},
+  {p:"Sie spricht mit ___ Freunden. (con los amigos — dativo)",ans:["den"],exp:"Plural dativo → den"},
+],
+tr:[
+  {p:"Traduce: 'Doy el libro al hombre'",ans:["Ich gebe dem Mann das Buch"],exp:"dem = dativo masculino"},
+  {p:"Traduce: 'Ayudo a la mujer'",ans:["Ich helfe der Frau"],exp:"der = dativo femenino"},
+  {p:"Traduce: 'El perro juega con los niños'",ans:["Der Hund spielt mit den Kindern"],exp:"den = dativo plural"},
+  {p:"Traduce: 'Le agradezco a la profesora'",ans:["Ich danke der Lehrerin"],exp:"der = dativo femenino"},
+  {p:"Traduce: 'Ayuda a los niños'",ans:["Er hilft den Kindern"],exp:"den = dativo plural"},
+  {p:"Traduce: 'Eso pertenece a un hombre'",ans:["Das gehört einem Mann"],exp:"einem = dativo masc. indef."},
+  {p:"Traduce: 'Vivo con mis padres'",ans:["Ich wohne bei meinen Eltern"],exp:"meinen = dativo plural posesor"},
+  {p:"Traduce: 'Él da el juguete al niño'",ans:["Er gibt dem Kind das Spielzeug"],exp:"dem = dativo neutro"},
+  {p:"Traduce: 'Ella habla con los amigos'",ans:["Sie spricht mit den Freunden"],exp:"den = dativo plural"},
+  {p:"Traduce: 'Eso pertenece a una mujer'",ans:["Das gehört einer Frau"],exp:"einer = dativo fem. indef."},
+]},
+
+/* ══ 19 ══════════════════════════════════════════ */
+{id:19,titulo:"Pronombres en Dativo",icono:"🔀",
+mc:[
+  {p:"Pronombre dativo de 'ich':",ops:["mich","mir","mein","ich"],r:1,exp:"ich → mir. Ej: Er gibt mir das Buch."},
+  {p:"Pronombre dativo de 'du':",ops:["dich","dein","dir","du"],r:2,exp:"du → dir. Ej: Ich helfe dir."},
+  {p:"Pronombre dativo de 'er':",ops:["ihn","sein","ihm","er"],r:2,exp:"er → ihm. Ej: Ich gebe ihm das Geld."},
+  {p:"Pronombre dativo de 'sie (ella)':",ops:["sie","ihr","ihre","ihnen"],r:1,exp:"sie → ihr. Ej: Ich helfe ihr."},
+  {p:"Pronombre dativo de 'wir':",ops:["uns","unser","wir","euch"],r:0,exp:"wir → uns. Ej: Er gibt uns das Buch."},
+  {p:"Pronombre dativo de 'ihr':",ops:["euer","sie","ihnen","euch"],r:3,exp:"ihr → euch. Ej: Ich gebe euch das Geld."},
+  {p:"Pronombre dativo de 'sie (ellos)/Sie':",ops:["sie","ihr","ihnen","euch"],r:2,exp:"sie/Sie → ihnen. Ej: Ich helfe ihnen."},
+  {p:"'Er gibt ___ das Buch' (me da el libro)",ops:["mich","mir","ich","mein"],r:1,exp:"ich → mir (dativo)."},
+  {p:"'Ich helfe ___' (te ayudo)",ops:["dich","du","dir","dein"],r:2,exp:"du → dir."},
+  {p:"'Das gehört ___' (eso les pertenece — ellos)",ops:["sie","ihr","ihnen","euch"],r:2,exp:"sie (ellos) → ihnen."},
+],
+fill:[
+  {p:"Er gibt ___ das Buch. (me da el libro)",ans:["mir"],exp:"ich → mir (dativo)"},
+  {p:"Ich helfe ___. (te ayudo)",ans:["dir"],exp:"du → dir (dativo)"},
+  {p:"Ich gebe ___ das Geld. (le doy el dinero — a él)",ans:["ihm"],exp:"er → ihm (dativo)"},
+  {p:"Das gehört ___. (eso le pertenece a ella)",ans:["ihr"],exp:"sie (ella) → ihr (dativo)"},
+  {p:"Er gibt ___ das Buch. (nos da el libro)",ans:["uns"],exp:"wir → uns (dativo)"},
+  {p:"Ich gebe ___ das Geld. (os doy el dinero)",ans:["euch"],exp:"ihr → euch (dativo)"},
+  {p:"Das gehört ___. (eso les pertenece a ellos)",ans:["ihnen"],exp:"sie (ellos) → ihnen (dativo)"},
+  {p:"Wie geht es ___? (¿cómo estás? — informal)",ans:["dir"],exp:"du → dir"},
+  {p:"Das Essen schmeckt ___. (la comida me sabe bien)",ans:["mir"],exp:"ich → mir"},
+  {p:"Es gefällt ___. (a ella le gusta)",ans:["ihr"],exp:"sie → ihr"},
+],
+tr:[
+  {p:"Traduce: 'Él me da el libro'",ans:["Er gibt mir das Buch"],exp:"mir = dativo de ich"},
+  {p:"Traduce: 'Te ayudo'",ans:["Ich helfe dir"],exp:"dir = dativo de du"},
+  {p:"Traduce: 'Le doy el dinero (a él)'",ans:["Ich gebe ihm das Geld"],exp:"ihm = dativo de er"},
+  {p:"Traduce: 'Eso le pertenece a ella'",ans:["Das gehört ihr"],exp:"ihr = dativo de sie (ella)"},
+  {p:"Traduce: 'Nos da el libro'",ans:["Er gibt uns das Buch"],exp:"uns = dativo de wir"},
+  {p:"Traduce: 'Os doy el dinero'",ans:["Ich gebe euch das Geld"],exp:"euch = dativo de ihr"},
+  {p:"Traduce: 'Eso les pertenece a ellos'",ans:["Das gehört ihnen"],exp:"ihnen = dativo de sie (ellos)"},
+  {p:"Traduce: '¿Cómo estás?'",ans:["Wie geht es dir?"],exp:"dir = dativo de du"},
+  {p:"Traduce: 'La comida me sabe bien'",ans:["Das Essen schmeckt mir"],exp:"mir = dativo de ich"},
+  {p:"Traduce: 'A ella le gusta'",ans:["Es gefällt ihr"],exp:"ihr = dativo de sie"},
+]},
+
+/* ══ 20 ══════════════════════════════════════════ */
+{id:20,titulo:"Preposiciones con Dativo y Acusativo",icono:"↔️",
+mc:[
+  {p:"Las Wechselpräpositionen (preposiciones de doble caso) son:",ops:["mit, nach, seit, von","an, auf, in, über, unter, vor, hinter, neben, zwischen","durch, für, gegen, ohne","zu, bei, aus, gegenüber"],r:1,exp:"an, auf, in, über, unter, vor, hinter, neben, zwischen → dativo (lugar) o acusativo (dirección)."},
+  {p:"'Ich lege das Buch ___ den Tisch' (pongo el libro en la mesa — dirección)",ops:["auf dem","auf den","an dem","an den"],r:1,exp:"Movimiento → acusativo: auf den Tisch (masc. acus.)."},
+  {p:"'Das Buch liegt ___ dem Tisch' (el libro está en la mesa — lugar)",ops:["auf den","auf dem","auf die","auf ein"],r:1,exp:"Lugar estático → dativo: auf dem Tisch."},
+  {p:"¿Qué caso indica lugar (wo)?",ops:["Acusativo","Nominativo","Dativo","Genitivo"],r:2,exp:"Wo? (¿dónde?) → dativo. Wohin? (¿adónde?) → acusativo."},
+  {p:"'Ich hänge das Bild ___ die Wand' (cuelgo el cuadro en la pared — dirección)",ops:["an der","an die","an den","an dem"],r:1,exp:"Movimiento hacia → acusativo: an die Wand (fem. acus.)."},
+  {p:"'Das Bild hängt ___ der Wand' (el cuadro cuelga en la pared — lugar)",ops:["an die","an der","an dem","an den"],r:1,exp:"Lugar → dativo: an der Wand (fem. dativo)."},
+  {p:"'Er geht ___ Zimmer' (entra en el cuarto — dirección, neutro)",ops:["ins","im","in dem","in die"],r:0,exp:"in + das (neutro acus.) = ins Zimmer."},
+  {p:"'Er ist ___ Zimmer' (está en el cuarto — lugar, neutro)",ops:["ins","im","in das","in die"],r:1,exp:"in + dem (neutro dativo) = im Zimmer."},
+  {p:"'Ich stelle die Vase ___ den Tisch' (pongo el jarrón sobre la mesa)",ops:["auf dem","auf den","auf die","auf der"],r:1,exp:"auf + den Tisch (masc. acus.) → dirección."},
+  {p:"'Die Katze sitzt ___ dem Bett' (el gato está bajo la cama — dativo)",ops:["unter den","unter dem","unter die","unter der"],r:1,exp:"unter + dem Bett (neutro dativo) → lugar."},
+],
+fill:[
+  {p:"Ich lege das Buch auf ___ Tisch. (sobre la mesa — dirección masc.)",ans:["den"],exp:"auf + acusativo (dirección) → den"},
+  {p:"Das Buch liegt auf ___ Tisch. (sobre la mesa — lugar masc.)",ans:["dem"],exp:"auf + dativo (lugar) → dem"},
+  {p:"Ich hänge das Bild an ___ Wand. (en la pared — dirección fem.)",ans:["die"],exp:"an + acusativo (dirección) → die"},
+  {p:"Das Bild hängt an ___ Wand. (en la pared — lugar fem.)",ans:["der"],exp:"an + dativo (lugar) → der"},
+  {p:"Er geht in ___ Zimmer. (entra en el cuarto — dirección neutro)",ans:["das","ins"],exp:"in + das (neutro acus.) = ins"},
+  {p:"Er ist in ___ Zimmer. (está en el cuarto — lugar neutro)",ans:["dem","im"],exp:"in + dem (neutro dat.) = im"},
+  {p:"Ich stelle die Vase auf ___ Tisch. (sobre la mesa — dirección)",ans:["den"],exp:"auf + acusativo masc. → den"},
+  {p:"Die Vase steht auf ___ Tisch. (sobre la mesa — lugar)",ans:["dem"],exp:"auf + dativo masc. → dem"},
+  {p:"Die Katze springt unter ___ Bett. (debajo de la cama — dirección neutro)",ans:["das"],exp:"unter + acusativo (dirección) → das"},
+  {p:"Die Katze sitzt unter ___ Bett. (bajo la cama — lugar neutro)",ans:["dem"],exp:"unter + dativo (lugar) → dem"},
+],
+tr:[
+  {p:"Traduce: 'Pongo el libro sobre la mesa'",ans:["Ich lege das Buch auf den Tisch"],exp:"auf + acusativo (dirección)"},
+  {p:"Traduce: 'El libro está sobre la mesa'",ans:["Das Buch liegt auf dem Tisch"],exp:"auf + dativo (lugar)"},
+  {p:"Traduce: 'Cuelgo el cuadro en la pared'",ans:["Ich hänge das Bild an die Wand"],exp:"an + acusativo femenino"},
+  {p:"Traduce: 'El cuadro cuelga en la pared'",ans:["Das Bild hängt an der Wand"],exp:"an + dativo femenino"},
+  {p:"Traduce: 'Él entra en el cuarto'",ans:["Er geht ins Zimmer","Er geht in das Zimmer"],exp:"in + acusativo neutro"},
+  {p:"Traduce: 'Él está en el cuarto'",ans:["Er ist im Zimmer","Er ist in dem Zimmer"],exp:"in + dativo neutro"},
+  {p:"Traduce: 'Pongo el jarrón sobre la mesa'",ans:["Ich stelle die Vase auf den Tisch"],exp:"auf + acusativo masc."},
+  {p:"Traduce: 'El jarrón está sobre la mesa'",ans:["Die Vase steht auf dem Tisch"],exp:"auf + dativo masc."},
+  {p:"Traduce: 'El gato salta debajo de la cama'",ans:["Die Katze springt unter das Bett"],exp:"unter + acusativo neutro"},
+  {p:"Traduce: 'El gato está debajo de la cama'",ans:["Die Katze sitzt unter dem Bett"],exp:"unter + dativo neutro"},
+]},
+
+/* ══ 21 ══════════════════════════════════════════ */
+{id:21,titulo:"Comparativo y Superlativo",icono:"🏆",
+mc:[
+  {p:"¿Cómo se forma el superlativo predicativo?",ops:["adj + -ste","am + adj + -sten","sehr + adj + -st","am + adj + -er"],r:1,exp:"Superlativo predicativo: am + adj + -sten. Ej: Er ist am schnellsten."},
+  {p:"'schnell → schneller → ___' (superlativo)",ops:["am schnellst","am schnellsten","am schnellste","schnellsten"],r:1,exp:"am schnellsten = el más rápido."},
+  {p:"Superlativo de 'gut':",ops:["am bester","am güter","am besten","am bessesten"],r:2,exp:"gut → besser → am besten (irregular)."},
+  {p:"Superlativo de 'groß':",ops:["am größer","am größten","am größte","am großsten"],r:1,exp:"groß → größer → am größten."},
+  {p:"'Er ist ___ Schüler in der Klasse' (el mejor — atributivo)",ops:["am beste","der beste","der bester","den besten"],r:1,exp:"Superlativo atributivo: der/die/das + adj + -ste."},
+  {p:"Comparativo de 'viel':",ops:["vieler","mehr","vieliger","vielst"],r:1,exp:"viel → mehr → am meisten (irregular)."},
+  {p:"Superlativo de 'alt':",ops:["am älteren","am ältesten","am altest","am alten"],r:1,exp:"alt → älter → am ältesten."},
+  {p:"'Das ist ___ schöne Stadt, die ich kenne' (la más bonita — fem.)",ops:["am schönste","die schönste","der schönsten","das schönste"],r:1,exp:"die schönste Stadt (fem. nominativo superlativo atributivo)."},
+  {p:"'Er hat ___ Geld' (él tiene el más dinero)",ops:["das meiste","die meiste","das meisten","dem meisten"],r:0,exp:"das meiste Geld (neutro nominativo superlativo atributivo)."},
+  {p:"Superlativo de 'wenig':",ops:["am wenigsten","am wenigster","am mindestens","am wenigste"],r:0,exp:"wenig → weniger → am wenigsten."},
+],
+fill:[
+  {p:"Er ist am ___. (es el más rápido — schnell)",ans:["schnellsten"],exp:"am schnellsten = superlativo predicativo"},
+  {p:"Sie ist die ___ Schülerin. (la mejor — gut, fem.)",ans:["beste"],exp:"die beste = superlativo atributivo fem."},
+  {p:"Das ist am ___. (es el más grande — groß)",ans:["größten"],exp:"am größten = superlativo predicativo"},
+  {p:"Er ist der ___ Schüler. (el más viejo — alt, masc.)",ans:["älteste"],exp:"der älteste = superlativo atributivo masc."},
+  {p:"Sie hat am ___ Geld. (tiene el menos dinero — wenig)",ans:["wenigsten"],exp:"am wenigsten"},
+  {p:"Er hat am ___ Bücher. (tiene los más libros — viel)",ans:["meisten"],exp:"am meisten"},
+  {p:"Das ist die ___ Stadt. (la más bonita — schön, fem.)",ans:["schönste"],exp:"die schönste = superlativo atributivo fem."},
+  {p:"Er läuft am ___. (corre lo más rápido — schnell)",ans:["schnellsten"],exp:"am schnellsten"},
+  {p:"Das Essen ist am ___. (es el más rico — lecker)",ans:["leckersten"],exp:"am leckersten"},
+  {p:"Er ist am ___. (es el mejor — gut)",ans:["besten"],exp:"am besten = superlativo irregular"},
+],
+tr:[
+  {p:"Traduce: 'Él es el más rápido'",ans:["Er ist am schnellsten"],exp:"am schnellsten"},
+  {p:"Traduce: 'Ella es la mejor alumna'",ans:["Sie ist die beste Schülerin"],exp:"die beste"},
+  {p:"Traduce: 'Es lo más grande'",ans:["Es ist am größten"],exp:"am größten"},
+  {p:"Traduce: 'Él es el alumno más viejo'",ans:["Er ist der älteste Schüler"],exp:"der älteste"},
+  {p:"Traduce: 'Ella tiene el menos dinero'",ans:["Sie hat am wenigsten Geld"],exp:"am wenigsten"},
+  {p:"Traduce: 'Él tiene los más libros'",ans:["Er hat am meisten Bücher"],exp:"am meisten"},
+  {p:"Traduce: 'Es la ciudad más bonita'",ans:["Das ist die schönste Stadt"],exp:"die schönste"},
+  {p:"Traduce: 'Él corre lo más rápido'",ans:["Er läuft am schnellsten"],exp:"am schnellsten"},
+  {p:"Traduce: 'Es lo mejor'",ans:["Es ist am besten"],exp:"am besten = irregular"},
+  {p:"Traduce: 'Ella es la más joven'",ans:["Sie ist am jüngsten","Sie ist die Jüngste"],exp:"am jüngsten"},
+]},
+
+/* ══ 22 ══════════════════════════════════════════ */
+{id:22,titulo:"Verbos Reflexivos A2",icono:"🔁",
+mc:[
+  {p:"'Ich interessiere mich für Musik' = ",ops:["Me aburre la música","Me interesa la música / Me intereso por la música","Toco la música","Estudio música"],r:1,exp:"sich interessieren für = interesarse por."},
+  {p:"'sich freuen auf' significa:",ops:["alegrarse por algo pasado","tener miedo de","alegrarse por algo futuro (expectativa)","aburrirse de"],r:2,exp:"sich freuen auf = alegrarse de algo que viene (expectativa futura)."},
+  {p:"'sich freuen über' significa:",ops:["alegrarse de algo futuro","tener miedo","alegrarse por algo pasado/presente","estar triste"],r:2,exp:"sich freuen über = alegrarse por algo que ocurrió."},
+  {p:"'sich erinnern an' significa:",ops:["olvidarse de","recordar","prepararse para","cuidarse de"],r:1,exp:"sich erinnern an = recordar algo."},
+  {p:"'Ich ärgere mich ___ den Lärm' (me enfada el ruido)",ops:["auf","über","für","an"],r:1,exp:"sich ärgern über = enfadarse por."},
+  {p:"'Er freut sich ___ den Urlaub' (se alegra de las vacaciones próximas)",ops:["über","für","auf","an"],r:2,exp:"sich freuen auf = alegría anticipatoria."},
+  {p:"'Ich erinnere mich ___ dich' (te recuerdo)",ops:["für","über","auf","an"],r:3,exp:"sich erinnern an = recordar."},
+  {p:"'Sie kümmert sich ___ die Kinder' (se encarga de los niños)",ops:["für","an","über","um"],r:3,exp:"sich kümmern um = encargarse de / cuidar de."},
+  {p:"'Ich bewerbe mich ___ die Stelle' (me postulo para el puesto)",ops:["an","auf","für","über"],r:1,exp:"sich bewerben um/auf = postularse para."},
+  {p:"'Wir treffen uns' significa:",ops:["Nos perdemos","Nos reunimos / nos encontramos","Nos separamos","Nos olvidamos"],r:1,exp:"sich treffen = encontrarse / reunirse."},
+],
+fill:[
+  {p:"Ich interessiere mich ___ Musik. (me intereso por la música)",ans:["für"],exp:"sich interessieren für + acusativo"},
+  {p:"Er freut sich ___ den Urlaub. (se alegra de las vacaciones — expectativa)",ans:["auf"],exp:"sich freuen auf (futuro)"},
+  {p:"Ich freue mich ___ das Geschenk. (me alegra el regalo — ya recibido)",ans:["über"],exp:"sich freuen über (presente/pasado)"},
+  {p:"Ich erinnere mich ___ dich. (te recuerdo)",ans:["an"],exp:"sich erinnern an"},
+  {p:"Ich ärgere mich ___ den Lärm. (me enfada el ruido)",ans:["über"],exp:"sich ärgern über"},
+  {p:"Sie kümmert sich ___ die Kinder. (se encarga de los niños)",ans:["um"],exp:"sich kümmern um"},
+  {p:"Ich bewerbe mich ___ die Stelle. (me postulo para el puesto)",ans:["um","auf"],exp:"sich bewerben um/auf"},
+  {p:"Wir treffen ___ morgen. (nos encontramos mañana)",ans:["uns"],exp:"sich treffen → wir treffen uns"},
+  {p:"Er ___ sich nicht wohl. (no se siente bien — fühlen)",ans:["fühlt"],exp:"sich fühlen → er fühlt sich"},
+  {p:"Ich ___ mich für Deutsch. (me intereso por el alemán)",ans:["interessiere"],exp:"sich interessieren → ich interessiere mich"},
+],
+tr:[
+  {p:"Traduce: 'Me intereso por la música'",ans:["Ich interessiere mich für Musik"],exp:"sich interessieren für"},
+  {p:"Traduce: 'Él se alegra de las vacaciones (futuras)'",ans:["Er freut sich auf den Urlaub"],exp:"sich freuen auf"},
+  {p:"Traduce: 'Me alegra el regalo'",ans:["Ich freue mich über das Geschenk"],exp:"sich freuen über"},
+  {p:"Traduce: 'Te recuerdo'",ans:["Ich erinnere mich an dich"],exp:"sich erinnern an"},
+  {p:"Traduce: 'Me enfada el ruido'",ans:["Ich ärgere mich über den Lärm"],exp:"sich ärgern über"},
+  {p:"Traduce: 'Ella se encarga de los niños'",ans:["Sie kümmert sich um die Kinder"],exp:"sich kümmern um"},
+  {p:"Traduce: 'Me postulo para el puesto'",ans:["Ich bewerbe mich um die Stelle"],exp:"sich bewerben um"},
+  {p:"Traduce: 'Nos encontramos mañana'",ans:["Wir treffen uns morgen"],exp:"sich treffen → uns"},
+  {p:"Traduce: 'No me siento bien'",ans:["Ich fühle mich nicht wohl"],exp:"sich fühlen → mich"},
+  {p:"Traduce: 'Ella se alegra del regalo'",ans:["Sie freut sich über das Geschenk"],exp:"sich freuen über → sich"},
+]},
+
+/* ══ 23 ══════════════════════════════════════════ */
+{id:23,titulo:"Adjetivos en Dativo",icono:"🏷️",
+mc:[
+  {p:"Terminación del adjetivo en dativo masculino definido:",ops:["-e","-en","-er","-em"],r:1,exp:"Dativo con artículo definido → siempre -en."},
+  {p:"'Ich helfe ___ alten Mann' (al hombre viejo — dativo def.)",ops:["dem alten","den alten","dem alter","des alten"],r:0,exp:"dem alte-n Mann (dativo masc. def.)."},
+  {p:"Terminación del adjetivo en dativo femenino indefinido:",ops:["-e","-er","-en","-em"],r:2,exp:"Dativo femenino indefinido → -en."},
+  {p:"'Mit ___ neuen Auto' (con el carro nuevo — neutro dativo def.)",ops:["dem neuen","den neuen","dem neues","des neuen"],r:0,exp:"dem neue-n Auto (neutro dativo def.)."},
+  {p:"Terminación del adjetivo en dativo masculino indefinido:",ops:["-e","-em","-en","-er"],r:2,exp:"Dativo masculino indefinido → -en."},
+  {p:"'Er wohnt bei ___ alten Freundin' (con su amiga vieja — fem. dativo indef.)",ops:["einer alten","einer alte","einem alten","einer alter"],r:0,exp:"einer alte-n Freundin (fem. dativo indef.)."},
+  {p:"Dativo plural con artículo definido → terminación:",ops:["-e","-er","-es","-en"],r:3,exp:"Siempre -en en dativo (con artículo def./indef.)."},
+  {p:"'Mit ___ kleinen Kindern spielen' (con los niños pequeños — plural dativo)",ops:["den kleinen","die kleinen","dem kleinen","den kleine"],r:0,exp:"den kleine-n Kindern (plural dativo)."},
+  {p:"'Das gehört ___ jungen Mann' (a un hombre joven — masc. dat. indef.)",ops:["einem jungen","einen jungen","einem junger","ein junger"],r:0,exp:"einem junge-n Mann."},
+  {p:"'Er gibt ___ netten Frau das Buch' (a la mujer simpática — fem. dat. def.)",ops:["die nette","der netten","der nette","den netten"],r:1,exp:"der nette-n Frau (fem. dativo def.)."},
+],
+fill:[
+  {p:"Ich helfe dem alt___ Mann. (al hombre viejo — dativo def.)",ans:["en","alten"],exp:"Dativo def. → -en → alten"},
+  {p:"Mit dem neu___ Auto. (con el carro nuevo — dativo def.)",ans:["en","neuen"],exp:"Dativo def. → -en → neuen"},
+  {p:"Er wohnt bei einer alt___ Freundin. (con su amiga vieja — dat. indef.)",ans:["en","alten"],exp:"Dativo indef. → -en → alten"},
+  {p:"Mit den klein___ Kindern spielen. (con los niños pequeños — plural)",ans:["en","kleinen"],exp:"Plural dativo → -en"},
+  {p:"Das gehört einem jung___ Mann. (a un hombre joven — dat. indef.)",ans:["en","jungen"],exp:"Dativo indef. → -en"},
+  {p:"Er gibt der nett___ Frau das Buch. (a la mujer simpática — fem. dat. def.)",ans:["en","netten"],exp:"Fem. dativo def. → -en"},
+  {p:"Ich spreche mit dem groß___ Hund. (con el perro grande — masc. dat.)",ans:["en","großen"],exp:"Dativo def. → -en"},
+  {p:"Sie hilft einem klein___ Kind. (a un niño pequeño — neutro dat. indef.)",ans:["en","kleinen"],exp:"Dativo indef. neutro → -en"},
+  {p:"Mit der schön___ Musik. (con la música bonita — fem. dativo def.)",ans:["en","schönen"],exp:"Fem. dativo def. → -en"},
+  {p:"Ich wohne bei meinen alt___ Eltern. (con mis padres viejos — plural dat.)",ans:["en","alten"],exp:"Plural dativo → -en"},
+],
+tr:[
+  {p:"Traduce: 'Ayudo al hombre viejo'",ans:["Ich helfe dem alten Mann"],exp:"dem alten (dativo def. masc.)"},
+  {p:"Traduce: 'Con el carro nuevo'",ans:["Mit dem neuen Auto"],exp:"dem neuen (dativo def. neutro)"},
+  {p:"Traduce: 'Él vive con su amiga vieja'",ans:["Er wohnt bei einer alten Freundin"],exp:"einer alten (dativo indef. fem.)"},
+  {p:"Traduce: 'Jugar con los niños pequeños'",ans:["Mit den kleinen Kindern spielen"],exp:"den kleinen (dativo plural)"},
+  {p:"Traduce: 'Eso pertenece a un hombre joven'",ans:["Das gehört einem jungen Mann"],exp:"einem jungen (dativo indef. masc.)"},
+  {p:"Traduce: 'Él da el libro a la mujer simpática'",ans:["Er gibt der netten Frau das Buch"],exp:"der netten (dativo def. fem.)"},
+  {p:"Traduce: 'Hablo con el perro grande'",ans:["Ich spreche mit dem großen Hund"],exp:"dem großen (dativo def. masc.)"},
+  {p:"Traduce: 'Ella ayuda a un niño pequeño'",ans:["Sie hilft einem kleinen Kind"],exp:"einem kleinen (dativo indef. neutro)"},
+  {p:"Traduce: 'Con la música bonita'",ans:["Mit der schönen Musik"],exp:"der schönen (dativo def. fem.)"},
+  {p:"Traduce: 'Vivo con mis padres viejos'",ans:["Ich wohne bei meinen alten Eltern"],exp:"meinen alten (dativo plural)"},
+]},
+
+/* ══ 24 ══════════════════════════════════════════ */
+{id:24,titulo:"Vocabulario y Expresiones A2",icono:"📚",
+mc:[
+  {p:"¿Cómo se dice 'por supuesto'?",ops:["Vielleicht","Natürlich","Manchmal","Übrigens"],r:1,exp:"Natürlich = por supuesto / claro."},
+  {p:"¿Cómo se dice 'sin embargo'?",ops:["Deshalb","Trotzdem","Weil","Wenn"],r:1,exp:"Trotzdem = sin embargo / de todas formas."},
+  {p:"'Übrigens' significa:",ops:["por supuesto","por lo tanto","por cierto / además","sin embargo"],r:2,exp:"Übrigens = por cierto / a propósito."},
+  {p:"'Deshalb' significa:",ops:["aunque","porque","por lo tanto / por eso","sin embargo"],r:2,exp:"Deshalb = por lo tanto / por eso."},
+  {p:"¿Cómo se dice 'además / encima de eso'?",ops:["Trotzdem","Außerdem","Übrigens","Deshalb"],r:1,exp:"Außerdem = además / encima de eso."},
+  {p:"'Leider' significa:",ops:["por suerte","quizás","desafortunadamente / lamentablemente","seguramente"],r:2,exp:"Leider = lamentablemente / por desgracia."},
+  {p:"¿Cómo se dice '¿de acuerdo?' o 'está bien'?",ops:["Vielleicht","Einverstanden","Trotzdem","Natürlich"],r:1,exp:"Einverstanden = de acuerdo / estoy de acuerdo."},
+  {p:"'Eigentlich' significa:",ops:["nunca","en realidad / en principio","por supuesto","desafortunadamente"],r:1,exp:"Eigentlich = en realidad / en principio."},
+  {p:"¿Cómo se dice 'en cambio'?",ops:["Deshalb","Trotzdem","Dagegen","Außerdem"],r:2,exp:"Dagegen = en cambio / en contra de eso."},
+  {p:"'Zwar...aber' significa:",ops:["si...entonces","porque...por eso","es verdad que...pero / si bien...","aunque...sin embargo (igual)"],r:2,exp:"Zwar...aber = si bien / es verdad que...pero."},
+],
+fill:[
+  {p:"Das ist ___ richtig. (por supuesto que es correcto)",ans:["natürlich"],exp:"natürlich = por supuesto"},
+  {p:"Ich bin krank, ___ gehe ich nicht. (por eso no voy)",ans:["deshalb"],exp:"deshalb = por lo tanto / por eso"},
+  {p:"Es regnet, ___ gehe ich spazieren. (sin embargo, salgo a caminar)",ans:["trotzdem"],exp:"trotzdem = sin embargo"},
+  {p:"___, ich habe eine Frage. (por cierto, tengo una pregunta)",ans:["Übrigens"],exp:"Übrigens = por cierto"},
+  {p:"Ich kann nicht kommen, ___. (lamentablemente)",ans:["leider"],exp:"leider = lamentablemente"},
+  {p:"Ich bin ___ damit einverstanden. (de acuerdo con eso)",ans:["einverstanden"],exp:"einverstanden = de acuerdo"},
+  {p:"Er ist ___ nett, aber auch anstrengend. (en realidad)",ans:["eigentlich"],exp:"eigentlich = en realidad"},
+  {p:"Ich bin müde. ___ muss ich arbeiten. (además)",ans:["Außerdem"],exp:"Außerdem = además"},
+  {p:"Das ist ___ schön, aber zu teuer. (si bien es bonito)",ans:["zwar"],exp:"Zwar...aber = si bien...pero"},
+  {p:"Ich spreche ___ kein Deutsch. (lamentablemente no hablo alemán)",ans:["leider"],exp:"leider = lamentablemente"},
+],
+tr:[
+  {p:"Traduce: 'Por supuesto'",ans:["Natürlich"],exp:"Natürlich = por supuesto"},
+  {p:"Traduce: 'Por lo tanto no voy'",ans:["Deshalb gehe ich nicht"],exp:"Deshalb = por eso"},
+  {p:"Traduce: 'Sin embargo salgo a caminar'",ans:["Trotzdem gehe ich spazieren"],exp:"Trotzdem = sin embargo"},
+  {p:"Traduce: 'Por cierto, tengo una pregunta'",ans:["Übrigens, ich habe eine Frage"],exp:"Übrigens = por cierto"},
+  {p:"Traduce: 'Lamentablemente no puedo venir'",ans:["Ich kann leider nicht kommen"],exp:"leider = lamentablemente"},
+  {p:"Traduce: 'Estoy de acuerdo'",ans:["Ich bin einverstanden"],exp:"einverstanden"},
+  {p:"Traduce: 'En realidad es simpático'",ans:["Er ist eigentlich nett"],exp:"eigentlich = en realidad"},
+  {p:"Traduce: 'Además tengo que trabajar'",ans:["Außerdem muss ich arbeiten"],exp:"Außerdem = además"},
+  {p:"Traduce: 'Si bien es bonito, es demasiado caro'",ans:["Es ist zwar schön, aber zu teuer"],exp:"Zwar...aber"},
+  {p:"Traduce: 'Lamentablemente no hablo alemán'",ans:["Ich spreche leider kein Deutsch"],exp:"leider"},
+]}
+];
+
+// ══════════════════════════════════════════════════════
+// ESTADO
+// ══════════════════════════════════════════════════════
+let temaActual=0,puntosTotal=0;
+const puntosPorTema=new Array(TEMAS.length).fill(0);
+const respondidoPorTema=new Array(TEMAS.length).fill(0);
+
+// ══════════════════════════════════════════════════════
+// SIDEBAR
+// ══════════════════════════════════════════════════════
+function renderSidebar(){
+  const nav=document.getElementById('sidebar-nav');
+  nav.innerHTML=TEMAS.map((t,i)=>`
+    <div class="nav-tema ${i===temaActual?'activo':''} ${respondidoPorTema[i]>=30?'done':''}"
+         onclick="cargarTema(${i})">
+      <span class="nav-num">${String(i+1).padStart(2,'0')}</span>
+      ${t.icono} ${t.titulo}
+      ${respondidoPorTema[i]>0?`<span class="nav-check">${puntosPorTema[i]}/${respondidoPorTema[i]}</span>`:''}
+    </div>`).join('');
+  document.getElementById('score-total').textContent=puntosTotal;
+}
+
+// ══════════════════════════════════════════════════════
+// INICIO
+// ══════════════════════════════════════════════════════
+function iniciarCurso(){
+  document.getElementById('pantalla-inicio').style.display='none';
+  document.getElementById('pantalla-tema').style.display='block';
+  cargarTema(0);
+}
+
+// ══════════════════════════════════════════════════════
+// CARGAR TEMA
+// ══════════════════════════════════════════════════════
+function cargarTema(idx){
+  temaActual=idx;
+  if(window.innerWidth<=768)cerrarSidebar();
+  renderSidebar();
+  const t=TEMAS[idx];
+  const total=t.mc.length+t.fill.length+t.tr.length;
+  const pct=Math.round((respondidoPorTema[idx]/total)*100);
+  document.getElementById('pantalla-tema').innerHTML=`
+    <div class="tema-header">
+      <div class="tema-icon">${t.icono}</div>
+      <div>
+        <div class="tema-title">${t.titulo}</div>
+        <div class="tema-sub">Tema ${idx+1} de ${TEMAS.length} · ${total} ejercicios</div>
+      </div>
+      <div class="tema-pts">
+        <div class="big" id="pts-tema">${puntosPorTema[idx]}</div>
+        <div class="lbl">puntos</div>
+      </div>
+    </div>
+    <div class="prog-wrap"><div class="prog-bar" id="pb" style="width:${pct}%"></div></div>
+    <div class="tipo-sec">
+      <div class="tipo-label"><span class="tbadge tbadge-mc">Selección Múltiple</span></div>
+      ${t.mc.map((e,i)=>renderMC(e,idx,i)).join('')}
+    </div>
+    <div class="tipo-sec">
+      <div class="tipo-label"><span class="tbadge tbadge-fill">Completar espacios</span></div>
+      ${t.fill.map((e,i)=>renderFill(e,idx,i)).join('')}
+    </div>
+    <div class="tipo-sec">
+      <div class="tipo-label"><span class="tbadge tbadge-tr">Traducir</span></div>
+      ${t.tr.map((e,i)=>renderTR(e,idx,i)).join('')}
+    </div>
+    <div id="res-${idx}" class="resumen"></div>
+    ${idx<TEMAS.length-1?`<button class="btn-sig" style="margin-top:16px;display:none" id="btn-sig-${idx}" onclick="cargarTema(${idx+1})">Siguiente tema →</button>`:''}
+  `;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════════════════════
+function renderMC(e,tI,eI){
+  const L=['A','B','C','D'];
+  return`<div class="ejercicio" id="mc-${tI}-${eI}">
+    <div class="ej-num">Ej. ${eI+1}</div>
+    <div class="ej-p">${e.p}</div>
+    <div class="opciones">${e.ops.map((o,oi)=>`
+      <button class="opcion" onclick="rMC(${tI},${eI},${oi},${e.r})" id="mo-${tI}-${eI}-${oi}">
+        <span class="op-letra">${L[oi]}</span>${o}
+      </button>`).join('')}</div>
+    <div class="feedback" id="fb-mc-${tI}-${eI}"></div>
+  </div>`;
+}
+function renderFill(e,tI,eI){
+  return`<div class="ejercicio" id="fill-${tI}-${eI}">
+    <div class="ej-num">Ej. ${eI+1}</div>
+    <div class="ej-p">${e.p}</div>
+    <div class="fill-row">
+      <input class="fill-inp" id="fi-${tI}-${eI}" placeholder="Escribe aquí..."
+             onkeydown="if(event.key==='Enter')rFill(${tI},${eI})"/>
+      <button class="btn-chk" id="fb-${tI}-${eI}" onclick="rFill(${tI},${eI})">Verificar</button>
+    </div>
+    <div class="feedback" id="fb-fill-${tI}-${eI}"></div>
+  </div>`;
+}
+function renderTR(e,tI,eI){
+  return`<div class="ejercicio" id="tr-${tI}-${eI}">
+    <div class="ej-num">Ej. ${eI+1}</div>
+    <div class="ej-p">${e.p}</div>
+    <input class="tr-inp" id="ti-${tI}-${eI}" placeholder="Tu traducción..."
+           onkeydown="if(event.key==='Enter')rTR(${tI},${eI})"/>
+    <button class="btn-chk" id="tb-${tI}-${eI}" onclick="rTR(${tI},${eI})">Verificar</button>
+    <div class="feedback" id="fb-tr-${tI}-${eI}"></div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════════════════
+// RESPONDER
+// ══════════════════════════════════════════════════════
+function rMC(tI,eI,sel,cor){
+  const card=document.getElementById(`mc-${tI}-${eI}`);
+  if(card.classList.contains('correcto')||card.classList.contains('incorrecto'))return;
+  const e=TEMAS[tI].mc[eI];
+  for(let i=0;i<e.ops.length;i++)document.getElementById(`mo-${tI}-${eI}-${i}`).disabled=true;
+  registrar(tI);
+  const fb=document.getElementById(`fb-mc-${tI}-${eI}`);
+  if(sel===cor){
+    document.getElementById(`mo-${tI}-${eI}-${sel}`).classList.add('ok');
+    card.classList.add('correcto');
+    fb.className='feedback ok';fb.innerHTML=`✅ <strong>¡Correcto!</strong> ${e.exp}`;
+    punto(tI);
+  }else{
+    document.getElementById(`mo-${tI}-${eI}-${sel}`).classList.add('err');
+    document.getElementById(`mo-${tI}-${eI}-${cor}`).classList.add('rev');
+    card.classList.add('incorrecto');
+    fb.className='feedback err';fb.innerHTML=`❌ <strong>Incorrecto.</strong> Correcta: <strong>${e.ops[cor]}</strong>. ${e.exp}`;
+  }
+}
+function rFill(tI,eI){
+  const inp=document.getElementById(`fi-${tI}-${eI}`);
+  const btn=document.getElementById(`fb-${tI}-${eI}`);
+  const card=document.getElementById(`fill-${tI}-${eI}`);
+  const fb=document.getElementById(`fb-fill-${tI}-${eI}`);
+  if(inp.disabled)return;
+  const resp=inp.value.trim();if(!resp)return;
+  inp.disabled=true;btn.disabled=true;registrar(tI);
+  const e=TEMAS[tI].fill[eI];
+  const ok=e.ans.map(a=>a.toLowerCase()).includes(resp.toLowerCase());
+  if(ok){inp.classList.add('ok');card.classList.add('correcto');fb.className='feedback ok';fb.innerHTML=`✅ <strong>¡Correcto!</strong> ${e.exp}`;punto(tI);}
+  else{inp.classList.add('err');card.classList.add('incorrecto');fb.className='feedback err';fb.innerHTML=`❌ <strong>Incorrecto.</strong> Aceptada: <strong>${e.ans[0]}</strong>. ${e.exp}`;}
+}
+function rTR(tI,eI){
+  const inp=document.getElementById(`ti-${tI}-${eI}`);
+  const btn=document.getElementById(`tb-${tI}-${eI}`);
+  const card=document.getElementById(`tr-${tI}-${eI}`);
+  const fb=document.getElementById(`fb-tr-${tI}-${eI}`);
+  if(inp.disabled)return;
+  const resp=inp.value.trim();if(!resp)return;
+  inp.disabled=true;btn.disabled=true;registrar(tI);
+  const e=TEMAS[tI].tr[eI];
+  const clean=s=>s.toLowerCase().replace(/[?.!]/g,'').trim();
+  const ok=e.ans.map(a=>clean(a)).includes(clean(resp));
+  if(ok){inp.classList.add('ok');card.classList.add('correcto');fb.className='feedback ok';fb.innerHTML=`✅ <strong>¡Correcto!</strong> ${e.exp}`;punto(tI);}
+  else{inp.classList.add('err');card.classList.add('incorrecto');fb.className='feedback err';fb.innerHTML=`❌ <strong>Incorrecto.</strong> Correcta: <strong>${e.ans[0]}</strong>. ${e.exp}`;}
+}
+
+// ══════════════════════════════════════════════════════
+// PUNTAJE
+// ══════════════════════════════════════════════════════
+function punto(tI){
+  puntosPorTema[tI]++;puntosTotal++;
+  const el=document.getElementById('pts-tema');if(el)el.textContent=puntosPorTema[tI];
+  document.getElementById('score-total').textContent=puntosTotal;
+  actualizarProg(tI);
+}
+function registrar(tI){
+  respondidoPorTema[tI]++;actualizarProg(tI);verificarFin(tI);
+}
+function actualizarProg(tI){
+  const t=TEMAS[tI];const total=t.mc.length+t.fill.length+t.tr.length;
+  const pct=Math.round((respondidoPorTema[tI]/total)*100);
+  const pb=document.getElementById('pb');if(pb)pb.style.width=pct+'%';
+  renderSidebar();
+}
+function verificarFin(tI){
+  const t=TEMAS[tI];const total=t.mc.length+t.fill.length+t.tr.length;
+  if(respondidoPorTema[tI]>=total){
+    const pts=puntosPorTema[tI];
+    const pct=Math.round((pts/total)*100);
+    const em=pct>=80?'🏆':pct>=60?'👍':'📚';
+    const res=document.getElementById(`res-${tI}`);
+    if(res){res.className='resumen vis';res.innerHTML=`
+      <div style="font-size:40px;margin-bottom:8px">${em}</div>
+      <h3>¡Tema completado!</h3>
+      <div class="big-score">${pts}/${total}</div>
+      <p>${pct}% correcto — ${pct>=80?'¡Excelente!':pct>=60?'Buen trabajo.':'Sigue practicando.'}</p>`;}
+    const bs=document.getElementById(`btn-sig-${tI}`);if(bs)bs.style.display='inline-block';
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// SIDEBAR MÓVIL
+// ══════════════════════════════════════════════════════
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('open');
+}
+function cerrarSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+renderSidebar();
+</script>
+
+</body>
+</html>
